@@ -3,7 +3,7 @@
 ---
 
 # SearchCarefully
-**Carefully Search** is a Minecraft mod that adds a tactical search system similar to *Tarkov*, allowing players to progressively uncover items in containers.
+**SearchCarefully** is a Minecraft mod that adds a tactical search system similar to *Tarkov*, allowing players to progressively uncover items in containers.
 
 
 ## Features
@@ -17,7 +17,7 @@
 ## Prerequisites  - **RarityCore** [[GitHub](https://github.com/Yanbwe/RarityCore)][[Modrinth](https://modrinth.com/mod/raritycore)][[Curseforge](https://curseforge.com/minecraft/mc-mods/raritycore)]: Required dependency for item rarity identification.
 
 ## Configuration Setup
-Refer to [ConfigGuide.md](doc/ConfigGuide_EN.md).
+Refer to [ConfigGuide.md](https://github.com/Yanbwe/SearchCarefully/blob/1.20.1-forge/doc/ConfigGuide_EN.md).
 
 ## Resource Pack Creation
-Refer to [ResourcePackGuide.md](doc/ResourcePackGuide_EN.md)
+Refer to [ResourcePackGuide.md](https://github.com/Yanbwe/SearchCarefully/blob/1.20.1-forge/doc/ResourcePackGuide_EN.md)

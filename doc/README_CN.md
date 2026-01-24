@@ -14,9 +14,9 @@ SearchCarefully是一个Minecraft模组，为游戏添加了类似塔科夫的�
 - **RarityCore[[Github](https://github.com/Yanbwe/RarityCore)][[Modrinth](https://modrinth.com/mod/raritycore)][[Curseforge](https://curseforge.com/minecraft/mc-mods/raritycore)]**：必需依赖，用于物品稀有度识别。
 
 ## 开始配置
-请参阅[ConfigGuide.md](doc/ConfigGuide_CN.md)
+请参阅[ConfigGuide.md](https://github.com/Yanbwe/SearchCarefully/blob/1.20.1-forge/doc/ConfigGuide_CN.md)
 ## 开始制作资源包
-请参阅[ResourcePackGuide.md](doc/ResourcePackGuide_CN.md)
+请参阅[ResourcePackGuide.md](https://github.com/Yanbwe/SearchCarefully/blob/1.20.1-forge/doc/ResourcePackGuide_CN.md)
 
 
 
