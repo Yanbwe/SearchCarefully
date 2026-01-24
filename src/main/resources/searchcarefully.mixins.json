@@ -1,0 +1,23 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "org.yanbwe.searchcarefully.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "refmap": "searchcarefully.refmap.json",
+  "mixins": [
+    "ChestMenuAccessor",
+    "ContainerAccessMixin",
+    "SlotMixin"
+  ],
+  "client": [
+    "SlotRenderMixin",
+    "ContainerScreenRenderMixin",
+    "GuiHotbarRenderMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "overwrites": {
+    "requireAnnotations": true
+  }
+}

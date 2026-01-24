@@ -1,0 +1,58 @@
+{
+  "search_completion_rarity_1": {
+    "sounds": [
+      {
+        "name": "searchcarefully:search_completion_rarity_1",
+        "stream": false
+      }
+    ]
+  },
+  "search_completion_rarity_2": {
+    "sounds": [
+      {
+        "name": "searchcarefully:search_completion_rarity_2",
+        "stream": false
+      }
+    ]
+  },
+  "search_completion_rarity_3": {
+    "sounds": [
+      {
+        "name": "searchcarefully:search_completion_rarity_3",
+        "stream": false
+      }
+    ]
+  },
+  "search_completion_rarity_4": {
+    "sounds": [
+      {
+        "name": "searchcarefully:search_completion_rarity_4",
+        "stream": false
+      }
+    ]
+  },
+  "search_completion_rarity_5": {
+    "sounds": [
+      {
+        "name": "searchcarefully:search_completion_rarity_5",
+        "stream": false
+      }
+    ]
+  },
+  "search_completion_rarity_6": {
+    "sounds": [
+      {
+        "name": "searchcarefully:search_completion_rarity_6",
+        "stream": false
+      }
+    ]
+  },
+  "search_completion_rarity_7": {
+    "sounds": [
+      {
+        "name": "searchcarefully:search_completion_rarity_7",
+        "stream": false
+      }
+    ]
+  }
+}
