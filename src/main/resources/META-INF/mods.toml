@@ -62,10 +62,10 @@ versionRange = "${minecraft_version_range}"
 ordering = "NONE"
 side = "BOTH"
 
-# Dependency on RarityCore (optional)
+
 [[dependencies."${mod_id}"]]
 modId = "raritycore"
-mandatory = false
+mandatory = true
 versionRange = "[1.0.0,)"
 ordering = "AFTER"
 side = "BOTH"
