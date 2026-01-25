@@ -21,10 +21,10 @@ public class SoundHandler {
             // 确保稀有度在有效范围内
             if (rarity >= 1 && rarity <= 7) {
                 // 在服务器端播放音效，这样附近的所有玩家都能听到
-                serverLevel.playSound(null, x, y, z, SearchCompletionSound.SEARCH_COMPLETION_EVENTS[rarity], SoundSource.PLAYERS, 0.5F, 1.0F);
+                serverLevel.playSound(null, x, y, z, SearchCompletionSound.SEARCH_COMPLETION_EVENTS[rarity], SoundSource.BLOCKS, 0.5F, 1.0F);
             } else {
                 // 如果稀有度无效，播放默认音效
-                serverLevel.playSound(null, x, y, z, SearchCompletionSound.SEARCH_COMPLETION_EVENTS[1], SoundSource.PLAYERS, 0.5F, 1.0F);
+                serverLevel.playSound(null, x, y, z, SearchCompletionSound.SEARCH_COMPLETION_EVENTS[1], SoundSource.BLOCKS, 0.5F, 1.0F);
             }
         }
     }
@@ -39,11 +39,11 @@ public class SoundHandler {
         if (player.level() instanceof ServerLevel serverLevel) {
             if (rarity >= 1 && rarity <= 7) {
                 serverLevel.playSound(null, player.getX(), player.getY(), player.getZ(), 
-                    SearchCompletionSound.SEARCH_COMPLETION_EVENTS[rarity], SoundSource.PLAYERS, 0.5F, 1.0F);
+                    SearchCompletionSound.SEARCH_COMPLETION_EVENTS[rarity], SoundSource.BLOCKS, 0.5F, 1.0F);
             } else {
                 // 如果稀有度无效，播放默认音效
                 serverLevel.playSound(null, player.getX(), player.getY(), player.getZ(), 
-                    SearchCompletionSound.SEARCH_COMPLETION_EVENTS[1], SoundSource.PLAYERS, 0.5F, 1.0F);
+                    SearchCompletionSound.SEARCH_COMPLETION_EVENTS[1], SoundSource.BLOCKS, 0.5F, 1.0F);
             }
         }
     }

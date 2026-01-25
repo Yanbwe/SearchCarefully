@@ -43,6 +43,7 @@ resource_pack/
 - **文件路径**：`assets/searchcarefully/sounds/`
 - **文件格式**：OGG 格式
 - **文件名**：`search_completion_rarity_1.ogg` 到 `search_completion_rarity_7.ogg`
+- **音频格式**：**必须为单声道（Mono）格式**，立体声（Stereo）格式无法应用3D空间定位和距离衰减效果
 
 ### 音效配置
 
@@ -54,57 +55,71 @@ resource_pack/
     "sounds": [
       {
         "name": "searchcarefully:search_completion_rarity_1",
-        "stream": false
+        "stream": false,
+        "attenuation_distance": 16
       }
-    ]
+    ],
+    "subtitle": "sound.searchcarefully.search_completion_rarity_1"
   },
   "search_completion_rarity_2": {
     "sounds": [
       {
         "name": "searchcarefully:search_completion_rarity_2",
-        "stream": false
+        "stream": false,
+        "attenuation_distance": 16
       }
-    ]
+    ],
+    "subtitle": "sound.searchcarefully.search_completion_rarity_2"
   },
   "search_completion_rarity_3": {
     "sounds": [
       {
         "name": "searchcarefully:search_completion_rarity_3",
-        "stream": false
+        "stream": false,
+        "attenuation_distance": 16
       }
-    ]
+    ],
+    "subtitle": "sound.searchcarefully.search_completion_rarity_3"
   },
   "search_completion_rarity_4": {
     "sounds": [
       {
         "name": "searchcarefully:search_completion_rarity_4",
-        "stream": false
+        "stream": false,
+        "attenuation_distance": 16
       }
-    ]
+    ],
+    "subtitle": "sound.searchcarefully.search_completion_rarity_4"
   },
   "search_completion_rarity_5": {
     "sounds": [
       {
         "name": "searchcarefully:search_completion_rarity_5",
-        "stream": false
+        "stream": false,
+        "attenuation_distance": 16
       }
-    ]
+    ],
+    "subtitle": "sound.searchcarefully.search_completion_rarity_5"
   },
   "search_completion_rarity_6": {
     "sounds": [
       {
         "name": "searchcarefully:search_completion_rarity_6",
-        "stream": false
+        "stream": false,
+        "attenuation_distance": 16
       }
-    ]
+    ],
+    "subtitle": "sound.searchcarefully.search_completion_rarity_6"
   },
   "search_completion_rarity_7": {
     "sounds": [
       {
         "name": "searchcarefully:search_completion_rarity_7",
-        "stream": false
+        "stream": false,
+        "attenuation_distance": 16
       }
-    ]
+    ],
+    "subtitle": "sound.searchcarefully.search_completion_rarity_7"
   }
 }
 ```
@@ -113,4 +128,6 @@ resource_pack/
 
 - **name**：音效的资源位置，格式为 `namespace:sound_name`
 - **stream**：是否流式播放，对于短音效设置为 false
-
+- **attenuation_distance**：音效衰减距离，用于3D空间定位效果，数值表示音效有效范围（方块）
+- **subtitle**：字幕文本的本地化键，用于在游戏字幕中显示音效描述
+- **重要提示**：音频文件必须为单声道（Mono）格式才能实现3D空间定位和距离衰减效果

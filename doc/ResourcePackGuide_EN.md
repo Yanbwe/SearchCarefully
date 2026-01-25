@@ -43,6 +43,7 @@ resource_pack/
 - **File Path**: `assets/searchcarefully/sounds/`
 - **File format**: OGG format
 - **File Name**: `search_completion_rarity_1.ogg` to `search_completion_rarity_7.ogg`
+- **Audio Format**: **Must be mono (single-channel) format**, stereo format cannot apply 3D spatial positioning and distance attenuation effects
 
 ### Sound Effects Configuration
 
@@ -54,57 +55,71 @@ Configure sound effects in `assets/searchcarefully/sounds.json`:
     "sounds": [
       {
         "name": "searchcarefully:search_completion_rarity_1",
-        "stream": false
+        "stream": false,
+        "attenuation_distance": 16
       }
-    ]
+    ],
+    "subtitle": "sound.searchcarefully.search_completion_rarity_1"
   },
   "search_completion_rarity_2": {
     "sounds": [
       {
         "name": "searchcarefully:search_completion_rarity_2",
-        "stream": false
+        "stream": false,
+        "attenuation_distance": 16
       }
-    ]
+    ],
+    "subtitle": "sound.searchcarefully.search_completion_rarity_2"
   },
   "search_completion_rarity_3": {
     "sounds": [
       {
         "name": "searchcarefully:search_completion_rarity_3",
-        "stream": false
+        "stream": false,
+        "attenuation_distance": 16
       }
-    ]
+    ],
+    "subtitle": "sound.searchcarefully.search_completion_rarity_3"
   },
   "search_completion_rarity_4": {
     "sounds": [
       {
         "name": "searchcarefully:search_completion_rarity_4",
-        "stream": false
+        "stream": false,
+        "attenuation_distance": 16
       }
-    ]
+    ],
+    "subtitle": "sound.searchcarefully.search_completion_rarity_4"
   },
   "search_completion_rarity_5": {
     "sounds": [
       {
         "name": "searchcarefully:search_completion_rarity_5",
-        "stream": false
+        "stream": false,
+        "attenuation_distance": 16
       }
-    ]
+    ],
+    "subtitle": "sound.searchcarefully.search_completion_rarity_5"
   },
   "search_completion_rarity_6": {
     "sounds": [
       {
         "name": "searchcarefully:search_completion_rarity_6",
-        "stream": false
+        "stream": false,
+        "attenuation_distance": 16
       }
-    ]
+    ],
+    "subtitle": "sound.searchcarefully.search_completion_rarity_6"
   },
   "search_completion_rarity_7": {
     "sounds": [
       {
         "name": "searchcarefully:search_completion_rarity_7",
-        "stream": false
+        "stream": false,
+        "attenuation_distance": 16
       }
-    ]
+    ],
+    "subtitle": "sound.searchcarefully.search_completion_rarity_7"
   }
 }
 ```
@@ -113,4 +128,6 @@ Configure sound effects in `assets/searchcarefully/sounds.json`:
 
 - **name**: The resource location of the sound effect, in the format of `namespace:sound_name`
 - **stream**: Whether to play in streaming mode. Set to false for short sound effects
-
+- **attenuation_distance**: The distance over which the sound attenuates, used for 3D spatial positioning effect, the value represents the effective range of the sound effect (in blocks)
+- **subtitle**: The localization key for subtitle text, used to display sound effect descriptions in game subtitles
+- **Important Note**: Audio files must be in mono (single-channel) format to enable 3D spatial positioning and distance attenuation effects

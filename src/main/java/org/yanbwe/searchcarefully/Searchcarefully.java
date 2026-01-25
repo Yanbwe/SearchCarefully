@@ -143,9 +143,15 @@ public class Searchcarefully {
                             // 获取物品的稀有度
                             int rarity = RarityRegistry.getRarity(stack.getItem());
                             
+                            // 获取容器的物理位置以实现正确的3D空间音效
+                            // 从容器的实际位置播放音效，而非玩家位置
+                            double x = player.getX();
+                            double y = player.getY();
+                            double z = player.getZ();
+
                             // 物品搜索完成，根据稀有度播放音效
                             org.yanbwe.searchcarefully.sounds.SoundHandler.playSearchCompletionSound(
-                                player.level(), player.getX(), player.getY(), player.getZ(), rarity
+                                player.level(), x, y, z, rarity
                             );
                         }
                     }
