@@ -5,5 +5,7 @@
   "sound.searchcarefully.search_completion_rarity_4": "搜索完成（稀有度4）",
   "sound.searchcarefully.search_completion_rarity_5": "搜索完成（稀有度5）",
   "sound.searchcarefully.search_completion_rarity_6": "搜索完成（稀有度6）",
-  "sound.searchcarefully.search_completion_rarity_7": "搜索完成（稀有度7）"
+  "sound.searchcarefully.search_completion_rarity_7": "搜索完成（稀有度7）",
+  "commands.searchcarefully.clear.success": "已尝试清除身上的搜索标签",
+  "commands.searchcarefully.clear.not_player": "只有玩家可以使用此命令"
 }

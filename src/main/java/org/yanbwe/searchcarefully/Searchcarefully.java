@@ -7,6 +7,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -26,7 +27,7 @@ import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
 import com.mojang.serialization.Codec;
 import org.slf4j.Logger;
 import org.yanbwe.raritycore.registry.RarityRegistry;
-import org.yanbwe.searchcarefully.loot.AddSearchTimeLootFunction;
+import org.yanbwe.searchcarefully.commands.ClearSearchTagsCommand;
 import org.yanbwe.searchcarefully.loot.AddSearchTimeLootModifier;
 import org.yanbwe.searchcarefully.network.NetworkHandler;
 import org.yanbwe.searchcarefully.sounds.SearchCompletionSound;
@@ -42,12 +43,6 @@ public class Searchcarefully {
     private static final Logger LOGGER = LogUtils.getLogger();
     
     // 战利品函数注册
-    public static final DeferredRegister<LootItemFunctionType> LOOT_FUNCTION_TYPES =
-            DeferredRegister.create(Registries.LOOT_FUNCTION_TYPE, MODID);
-    
-    public static final RegistryObject<LootItemFunctionType> ADD_SEARCH_TIME_LOOT_FUNCTION =
-            LOOT_FUNCTION_TYPES.register("add_search_time", () -> new LootItemFunctionType(new AddSearchTimeLootFunction.Serializer()));
-    
     // 音效注册
     public static final DeferredRegister<SoundEvent> SOUND_EVENTS =
             DeferredRegister.create(ForgeRegistries.SOUND_EVENTS, MODID);
@@ -76,9 +71,6 @@ public class Searchcarefully {
         // 为模组加载注册commonSetup方法
         modEventBus.addListener(this::commonSetup);
         
-        // 注册战利品函数
-        LOOT_FUNCTION_TYPES.register(modEventBus);
-        
         // 注册全局战利品修饰符
         GLOBAL_LOOT_MODIFIERS.register(modEventBus);
         
@@ -96,10 +88,8 @@ public class Searchcarefully {
         // 初始化网络处理器
         NetworkHandler.registerMessages();
         
-        // 设置战利品函数实例
-        AddSearchTimeLootFunction.setLootFunction(ADD_SEARCH_TIME_LOOT_FUNCTION.get());
-        
-        LOGGER.info("HELLO FROM COMMON SETUP");
+        LOGGER.info("SearchCarefully mod initialized - Global Loot Modifier registered");
+        LOGGER.info("Modifier codec: {}", AddSearchTimeLootModifier.CODEC.toString());
     }
 
     // 你可以使用SubscribeEvent，让事件总线发现要调用的方法
@@ -107,6 +97,13 @@ public class Searchcarefully {
     public void onServerStarting(ServerStartingEvent event) {
         // 服务器启动时做一些事情
         LOGGER.info("HELLO from server starting");
+    }
+    
+    // 注册自定义命令
+    @SubscribeEvent
+    public void onRegisterCommands(RegisterCommandsEvent event) {
+        ClearSearchTagsCommand.register(event.getDispatcher());
+        LOGGER.info("Registered SearchCarefully commands");
     }
     
     public static void handleSearchProgress(Player player, int containerType, int slotIndex) {
@@ -138,7 +135,7 @@ public class Searchcarefully {
                         // 用新的标签更新物品堆栈
                         slot.set(stack);
                         
-                        // 如果搜索完成，播放音效并通知玩家
+                        // 如果搜索完成，播放音效并清理NBT标签
                         if (remainingTime <= 0) {
                             // 获取物品的稀有度
                             int rarity = RarityRegistry.getRarity(stack.getItem());
@@ -153,6 +150,17 @@ public class Searchcarefully {
                             org.yanbwe.searchcarefully.sounds.SoundHandler.playSearchCompletionSound(
                                 player.level(), x, y, z, rarity
                             );
+                            
+                            // 清除搜索时间NBT标签，使物品能够正常堆叠
+                            tag.remove(SearchConstants.SEARCH_TIME_REMAINING);
+                            
+                            // 如果标签为空，完全移除标签以确保最佳兼容性
+                            if (tag.isEmpty()) {
+                                stack.setTag(null);
+                            }
+                            
+                            // 用清理后的物品更新槽位
+                            slot.set(stack);
                         }
                     }
                 }

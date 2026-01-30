@@ -27,9 +27,11 @@ public class AddSearchTimeLootModifier extends LootModifier {
 
     @Override
     protected @NotNull ObjectArrayList<ItemStack> doApply(ObjectArrayList<ItemStack> generatedLoot, LootContext context) {
-        // 判断是否为箱子类战利品表（路径以 "chests/" 开头）
+        // 处理所有 chests 类型的战利品表（兼容 chest 和 chests 两种格式）
         String lootTablePath = context.getQueriedLootTableId().getPath();
-        if (lootTablePath.startsWith("chests/")) {
+        
+        // 检查是否为 chest 或 chests 类型的战利品表
+        if (lootTablePath.startsWith("chest/") || lootTablePath.startsWith("chests/")) {
             Random random = new Random();
             for (ItemStack stack : generatedLoot) {
                 if (!stack.isEmpty()) {
