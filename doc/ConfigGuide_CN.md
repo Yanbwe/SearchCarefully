@@ -79,3 +79,33 @@
 #### `rarity7RandomTime` (整数, 范围: 0-1000, 默认: 0)
 - 作用：稀有度7物品的随机时间变化（游戏刻）
 
+### 自定义战利品表路径配置
+
+#### `customLootTablePaths` 
+- 作用：添加额外的战利品表路径，为其应用搜索时间机制
+- 格式：完整资源位置标识符列表
+- 示例：
+  ```toml
+  customLootTablePaths = [
+      "modid:special_chest",
+      "anothermod:treasure_box",
+      "custommod:magic_container"
+  ]
+  ```
+- 说明：
+  - 这些路径必须是完整的资源位置（namespace:path格式）
+  - 适用于那些路径非常猎奇的模组战利品表
+  - 可以添加任意数量的自定义路径
+
+#### `chestPathSegments` 
+- 作用：定义用于中间路径匹配的路径片段，为匹配的路径下的战利品表应用搜索时间机制
+- 格式：路径片段字符串列表
+- 默认值：`["chest", "chests"]`
+- 示例：
+  ```toml
+  chestPathSegments = ["chest", "chests", "treasure", "loot"]
+  ```
+- 说明：
+  - 用于匹配路径中间包含这些片段的战利品表
+  - 如果你按照示例值写，会匹配：`structures/village/chest`、`modid/special/chests`、`dungeons/treasure_room`
+

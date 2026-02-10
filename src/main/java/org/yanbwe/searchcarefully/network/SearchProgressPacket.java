@@ -7,21 +7,17 @@ import net.minecraftforge.network.NetworkEvent;
 import java.util.function.Supplier;
 
 public class SearchProgressPacket {
-    private final int containerType;
     private final int slotIndex;
 
-    public SearchProgressPacket(int containerType, int slotIndex) {
-        this.containerType = containerType;
+    public SearchProgressPacket(int slotIndex) {
         this.slotIndex = slotIndex;
     }
 
     public SearchProgressPacket(FriendlyByteBuf buf) {
-        this.containerType = buf.readInt();
         this.slotIndex = buf.readInt();
     }
 
     public void toBytes(FriendlyByteBuf buf) {
-        buf.writeInt(containerType);
         buf.writeInt(slotIndex);
     }
 
@@ -30,16 +26,12 @@ public class SearchProgressPacket {
         context.enqueueWork(() -> {
             Player player = context.getSender(); // 发送数据包的玩家
             if (player != null) {
-                // 在服务器端处理搜索进度
-                org.yanbwe.searchcarefully.Searchcarefully.handleSearchProgress(player, containerType, slotIndex);
+                // 在服务器端处理搜索进度，直接传入槽位索引
+                org.yanbwe.searchcarefully.Searchcarefully.handleSearchProgress(player, slotIndex);
             }
         });
         context.setPacketHandled(true);
         return true;
-    }
-
-    public int getContainerType() {
-        return containerType;
     }
 
     public int getSlotIndex() {

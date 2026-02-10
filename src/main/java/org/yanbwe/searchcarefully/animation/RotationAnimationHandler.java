@@ -54,7 +54,7 @@ public class RotationAnimationHandler {
             y = (float) (pathCenterY + halfPathSize - segmentProgress * (halfPathSize * 2));
         }
         
-        // 由于我们需要返回纹理左上角的坐标，而不是中心坐标
+        // 返回纹理左上角坐标而非中心坐标的要求
         // 纹理是16x16，所以需要从中心坐标减去8来得到左上角坐标
         x -= 8; // 纹理宽度的一半
         y -= 8; // 纹理高度的一半

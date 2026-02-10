@@ -36,7 +36,7 @@ public class ClientOverlayRenderer {
 
     @SubscribeEvent
     public static void onScreenRenderPost(ScreenEvent.Render.Post event) {
-        // 遮罩渲染现在通过mixin处理，以避免与RarityCore的边框渲染冲突
+        // 遮罩渲染通过mixin处理，避免与RarityCore的边框渲染产生冲突
     }
 
     // 添加工具提示事件处理，用于隐藏正在搜索的物品的工具提示

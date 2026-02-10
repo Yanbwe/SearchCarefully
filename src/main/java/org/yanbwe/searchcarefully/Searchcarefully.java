@@ -77,10 +77,10 @@ public class Searchcarefully {
         // 注册音效
         SOUND_EVENTS.register(modEventBus);
 
-        // 注册我们自己以监听服务器和其他游戏事件
+        // 注册事件监听器以处理服务器和其他游戏事件
         MinecraftForge.EVENT_BUS.register(this);
 
-        // 注册我们模组的ForgeConfigSpec，这样Forge可以为我们创建并加载配置文件
+        // 注册模组的ForgeConfigSpec，使Forge能够创建并加载配置文件
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.SPEC);
     }
 
@@ -106,12 +106,12 @@ public class Searchcarefully {
         LOGGER.info("Registered SearchCarefully commands");
     }
     
-    public static void handleSearchProgress(Player player, int containerType, int slotIndex) {
+    public static void handleSearchProgress(Player player, int slotIndex) {
         if (!Config.ENABLE_SEARCH_SYSTEM.get()) {
             return;
         }
         
-        // 获取玩家正在交互的容器 - 不再检查containerId，因为我们只关心玩家当前打开了容器
+        // 获取玩家正在交互的容器 - 直接检查玩家当前打开的容器
         if (player.containerMenu != null) {
             var slots = player.containerMenu.slots;
             if (slotIndex >= 0 && slotIndex < slots.size()) {

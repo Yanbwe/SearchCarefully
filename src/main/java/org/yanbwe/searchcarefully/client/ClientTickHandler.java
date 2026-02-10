@@ -37,17 +37,14 @@ public class ClientTickHandler {
             AbstractContainerScreen<?> screen = (AbstractContainerScreen<?>) mc.screen;
             
             if (screen.getMenu() != null) {
-                // 根据界面/菜单类型确定容器类型
-                int containerType = getContainerType(screen);
-                
-                // 遍历当前容器中的所有槽位
+                // 遍历当前容器中的所有槽位，恢复原来的批量处理机制
                 for (int i = 0; i < screen.getMenu().slots.size(); i++) {
                     Slot slot = screen.getMenu().slots.get(i);
                     
-                    // 直接检查槽位中的物品是否有搜索时间（而不是依赖activeSearchSlots集合）
+                    // 直接检查槽位中的物品是否有搜索时间
                     if (hasSearchTime(slot.getItem())) {
                         // 发送数据包到服务器以指示此槽位正在被搜索
-                        SearchProgressPacket packet = new SearchProgressPacket(containerType, i);
+                        SearchProgressPacket packet = new SearchProgressPacket(i);
                         NetworkHandler.INSTANCE.sendToServer(packet);
                     }
                 }
@@ -64,23 +61,5 @@ public class ClientTickHandler {
                stack.getTag().getInt(SearchConstants.SEARCH_TIME_REMAINING) > 0;
     }
     
-    private static int getContainerType(AbstractContainerScreen<?> screen) {
-        // 将不同的容器界面类型映射到整数ID
-        String screenClassName = screen.getClass().getSimpleName();
-        
-        // 由于潜在的导入问题，使用类名检查而不是instanceof
-        if (screenClassName.contains("Chest")) {
-            return 1; // 箱子
-        } else if (screenClassName.contains("Dispenser") || screenClassName.contains("Hopper") || screenClassName.contains("ShulkerBox")) {
-            return 2; // 发射器/漏斗/潜影盒
-        } else if (screenClassName.contains("Furnace")) {
-            return 3; // 熔炉
-        } else if (screenClassName.contains("Crafting")) {
-            return 4; // 合成台
-        } else if (screenClassName.contains("Inventory") || screenClassName.contains("Player")) {
-            return 0; // 玩家物品栏
-        } else {
-            return 0; // 默认为0，表示通用容器
-        }
-    }
+
 }

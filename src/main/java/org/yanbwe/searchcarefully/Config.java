@@ -1,6 +1,8 @@
 package org.yanbwe.searchcarefully;
 
 import net.minecraftforge.common.ForgeConfigSpec;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Config {
     public static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
@@ -11,11 +13,17 @@ public class Config {
     public static ForgeConfigSpec.IntValue MAX_SEARCH_TIME_TICKS;
     public static ForgeConfigSpec.DoubleValue SEARCH_SPEED_MULTIPLIER;
     
-    // Base search times for each rarity level
-    public static ForgeConfigSpec.IntValue[] RARITY_BASE_TIMES = new ForgeConfigSpec.IntValue[8]; // Index 0 unused, 1-7 for rarities
+    // 各稀有度等级的基础搜索时间
+    public static ForgeConfigSpec.IntValue[] RARITY_BASE_TIMES = new ForgeConfigSpec.IntValue[8]; // 索引0未使用，1-7对应稀有度
     
-    // Individual random time additions for each rarity level
-    public static ForgeConfigSpec.IntValue[] RARITY_RANDOM_TIMES = new ForgeConfigSpec.IntValue[8]; // Index 0 unused, 1-7 for rarities
+    // 各稀有度等级的独立随机时间增量
+    public static ForgeConfigSpec.IntValue[] RARITY_RANDOM_TIMES = new ForgeConfigSpec.IntValue[8]; // 索引0未使用，1-7对应稀有度
+    
+    // Custom loot table paths configuration
+    public static ForgeConfigSpec.ConfigValue<List<? extends String>> CUSTOM_LOOT_TABLE_PATHS;
+    
+    // Chest path segments for dynamic matching
+    public static ForgeConfigSpec.ConfigValue<List<? extends String>> CHEST_PATH_SEGMENTS;
     
     static {
         BUILDER.push("Search System Configuration");
@@ -77,6 +85,24 @@ public class Config {
         RARITY_RANDOM_TIMES[7] = BUILDER
                 .comment("Random time addition for rarity 7 (in ticks, 0 = no randomness)")
                 .defineInRange("rarity7RandomTime", 10, 0, 1000);
+        
+        // Custom loot table paths configuration
+        CUSTOM_LOOT_TABLE_PATHS = BUILDER
+                .comment("Additional loot table paths to apply search times to (one path per line)",
+                         "Example: ['modid:special_chest', 'anothermod:treasure_box']",
+                         "Note: These are full resource locations, not just path prefixes")
+                .defineListAllowEmpty(List.of("customLootTablePaths"), 
+                                    ArrayList::new, 
+                                    obj -> obj instanceof String s && !s.isEmpty());
+        
+        // Chest path segments for dynamic middle-path matching
+        CHEST_PATH_SEGMENTS = BUILDER
+                .comment("Path segments that indicate chest-type loot tables for middle-path matching",
+                         "Example: ['chest', 'chests', 'treasure']",
+                         "Used to match paths like 'structures/village/chest' or 'modid/special/chests'")
+                .defineListAllowEmpty(List.of("chestPathSegments"),
+                                    () -> List.of("chest", "chests", "block"),
+                                    obj -> obj instanceof String s && !s.isEmpty());
 
         BUILDER.pop();
         SPEC = BUILDER.build();

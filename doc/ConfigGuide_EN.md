@@ -79,3 +79,36 @@ The configuration file is located at `.minecraft/config/searchcarefully-common.t
 #### `rarity7RandomTime` (integer, range: 0-1000, default: 0)
 - Function: Random time variation (game ticks) for items with rarity level 7
 
+### Custom Loot Table Paths Configuration
+
+#### `customLootTablePaths` (String List, default: [])
+- Function: Add additional loot table paths to apply search time mechanism
+- Format: List of complete resource location identifiers
+- Example:
+  ```toml
+  customLootTablePaths = [
+      "modid:special_chest",
+      "anothermod:treasure_box",
+      "custommod:magic_container"
+  ]
+  ```
+- Description:
+  - These paths must be complete resource locations (namespace:path format)
+  - Complements the standard chest/chests path mechanism
+  - Suitable for mod loot tables using non-standard paths
+  - Arbitrary number of custom paths can be added
+
+#### `chestPathSegments` (String List, default: ["chest", "chests"])
+- Function: Define path segments for middle-path matching
+- Format: List of path segment strings
+- Default value: `["chest", "chests"]`
+- Example:
+  ```toml
+  chestPathSegments = ["chest", "chests", "treasure", "loot"]
+  ```
+- Description:
+  - Used to match loot tables containing these segments anywhere in the path
+  - For example matches: `structures/village/chest`, `modid/special/chests`, `dungeons/treasure_room`
+  - Supports user-defined extensions to adapt to different mod naming conventions
+  - Forms a complete matching system with prefix matching (`chest/`, `chests/`) and full path matching
+
