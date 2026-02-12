@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.yanbwe.raritycore.registry.RarityRegistry;
+// ContainerScreenRenderMixin中不再需要直接调用RarityRegistry
 import org.yanbwe.searchcarefully.animation.RotationAnimationHandler;
 import org.yanbwe.searchcarefully.textures.CustomTextureHandler;
 import org.yanbwe.searchcarefully.util.SlotRenderCache;

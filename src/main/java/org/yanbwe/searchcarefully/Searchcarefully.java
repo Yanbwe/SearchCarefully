@@ -138,7 +138,7 @@ public class Searchcarefully {
                         // 如果搜索完成，播放音效并清理NBT标签
                         if (remainingTime <= 0) {
                             // 获取物品的稀有度
-                            int rarity = RarityRegistry.getRarity(stack.getItem());
+                            int rarity = RarityRegistry.getNormalizedRarity(stack.getItem());
                             
                             // 获取容器的物理位置以实现正确的3D空间音效
                             // 从容器的实际位置播放音效，而非玩家位置

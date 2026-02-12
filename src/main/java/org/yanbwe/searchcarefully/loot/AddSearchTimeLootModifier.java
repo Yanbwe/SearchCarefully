@@ -65,7 +65,7 @@ public class AddSearchTimeLootModifier extends LootModifier {
             for (ItemStack stack : generatedLoot) {
                 if (!stack.isEmpty()) {
                     // 获取物品的稀有度
-                    int rarity = RarityRegistry.getRarity(stack.getItem());
+                    int rarity = RarityRegistry.getNormalizedRarity(stack.getItem());
                     
                     // 根据稀有度计算基础搜索时间
                     int baseSearchTime = SearchConstants.getSearchTimeByRarity(rarity);
