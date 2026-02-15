@@ -12,7 +12,8 @@
   "client": [
     "SlotRenderMixin",
     "ContainerScreenRenderMixin",
-    "GuiHotbarRenderMixin"
+    "GuiHotbarRenderMixin",
+    "TooltipRenderMixin"
   ],
   "injectors": {
     "defaultRequire": 1

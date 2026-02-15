@@ -12,6 +12,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderTooltipEvent;
 import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.yanbwe.searchcarefully.Searchcarefully;
@@ -40,7 +41,7 @@ public class ClientOverlayRenderer {
     }
 
     // 添加工具提示事件处理，用于隐藏正在搜索的物品的工具提示
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.HIGH)
     public static void onRenderTooltip(RenderTooltipEvent event) {
         Minecraft mc = Minecraft.getInstance();
         if (mc.screen instanceof AbstractContainerScreen) {
@@ -58,6 +59,11 @@ public class ClientOverlayRenderer {
 
     @SubscribeEvent
     public static void onClientTick(TickEvent.ClientTickEvent event) {
+        if (event.phase == TickEvent.Phase.START) {
+            // 重置每帧的状态标记
+            org.yanbwe.searchcarefully.mixin.TooltipRenderMixin.resetFrameState();
+        }
+        
         if (event.phase == TickEvent.Phase.END) {
             // 根据当前界面更新活跃的搜索槽位
             updateActiveSearchSlots();
@@ -89,39 +95,53 @@ public class ClientOverlayRenderer {
         }
     }
 
+    /**
+     * 根据鼠标位置找到对应的槽位
+     * 使用GUI坐标和槽位位置进行精确匹配
+     */
     private static Slot getSlotUnderMouse(AbstractContainerScreen<?> screen, int mouseX, int mouseY) {
         if (screen.getMenu() != null) {
-            // 使用mixin访问器获取正确的字段值
-            int guiLeft = ((ContainerAccessMixin) screen).getLeftPos();
-            int guiTop = ((ContainerAccessMixin) screen).getTopPos();
-            
+            // 获取GUI位置信息
+            Point guiPosition = getGuiPosition(screen);
+                
             // 遍历菜单中的所有槽位
             for (Slot slot : screen.getMenu().slots) {
-                int slotX = guiLeft + slot.x;
-                int slotY = guiTop + slot.y;
-                
-                // 检查鼠标是否悬停在槽位上
-                if (mouseX >= slotX && mouseY >= slotY && mouseX < slotX + 16 && mouseY < slotY + 16) {
+                if (isMouseOverSlot(guiPosition.x, guiPosition.y, slot, mouseX, mouseY)) {
                     return slot;
                 }
             }
         }
         return null;
     }
-
-    private static Slot findSlotUnderMouse(AbstractContainerScreen<?> screen, int mouseX, int mouseY) {
-        if (screen.getMenu() != null) {
-            // 使用mixin访问器获取正确的字段值
-            int guiLeft = ((ContainerAccessMixin) screen).getLeftPos();
-            int guiTop = ((ContainerAccessMixin) screen).getTopPos();
-            
-            for (Slot slot : screen.getMenu().slots) {
-                if (isMouseOverSlot(guiLeft, guiTop, slot, mouseX, mouseY)) {
-                    return slot;
-                }
-            }
+        
+    /**
+     * 获取容器界面的GUI位置坐标
+     * 通过Mixin访问器获取准确的界面位置信息
+     */
+    private static Point getGuiPosition(AbstractContainerScreen<?> screen) {
+        int guiLeft = ((ContainerAccessMixin) screen).getLeftPos();
+        int guiTop = ((ContainerAccessMixin) screen).getTopPos();
+        return new Point(guiLeft, guiTop);
+    }
+        
+    /**
+     * 表示GUI坐标的封装类
+     * 用于存储界面左上角坐标信息
+     */
+    private static class Point {
+        final int x, y;
+        Point(int x, int y) {
+            this.x = x;
+            this.y = y;
         }
-        return null;
+    }
+        
+    /**
+     * 统一的槽位鼠标检测方法
+     * 提供与getSlotUnderMouse相同的接口以保持向后兼容
+     */
+    private static Slot findSlotUnderMouse(AbstractContainerScreen<?> screen, int mouseX, int mouseY) {
+        return getSlotUnderMouse(screen, mouseX, mouseY);
     }
 
     private static boolean isMouseOverSlot(int guiLeft, int guiTop, Slot slot, int mouseX, int mouseY) {
