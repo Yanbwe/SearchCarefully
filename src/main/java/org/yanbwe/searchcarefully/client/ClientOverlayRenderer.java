@@ -61,7 +61,7 @@ public class ClientOverlayRenderer {
     public static void onClientTick(TickEvent.ClientTickEvent event) {
         if (event.phase == TickEvent.Phase.START) {
             // 重置每帧的状态标记
-            org.yanbwe.searchcarefully.mixin.TooltipRenderMixin.resetFrameState();
+            resetTooltipFrameState();
         }
         
         if (event.phase == TickEvent.Phase.END) {
@@ -156,5 +156,12 @@ public class ClientOverlayRenderer {
 
     public static AbstractContainerScreen<?> getCurrentScreen() {
         return currentScreen;
+    }
+    
+    /**
+     * 重置工具提示帧状态
+     */
+    private static void resetTooltipFrameState() {
+        org.yanbwe.searchcarefully.mixin.TooltipRenderMixin.resetTooltipState();
     }
 }

@@ -247,7 +247,14 @@ public abstract class TooltipRenderMixin {
      * 重置每帧的状态标记
      */
     @Unique
-    public static void resetFrameState() {
+    private static void resetFrameState() {
         tooltipBlockedThisFrame = false;
+    }
+    
+    /**
+     * 公共静态方法供外部调用重置状态
+     */
+    public static void resetTooltipState() {
+        resetFrameState();
     }
 }
