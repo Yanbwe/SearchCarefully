@@ -33,9 +33,9 @@ public abstract class TooltipRenderMixin {
     @Unique
     private static final long CACHE_DURATION = 50; // 50ms缓存
     
-    // 全局拦截状态标记
-    @Unique
-    private static boolean tooltipBlockedThisFrame = false;
+    // 全局拦截状态标记 - 现在由ClientOverlayRenderer管理
+    // @Unique
+    // private static boolean tooltipBlockedThisFrame = false;
     
     // 缓存常用对象引用
     @Unique
@@ -44,14 +44,16 @@ public abstract class TooltipRenderMixin {
     private static AbstractContainerScreen<?> cachedScreen = null;
 
     /**
-     * 在工具提示渲染的最早阶段进行拦截
-     * 这个注入点与Obscure Tooltips在同一层级，但使用更早的执行时机
+     * 移除工具提示拦截逻辑，完全依赖事件系统处理
+     * 避免与Obscure Tooltips产生冲突
      */
+    /*
     @Inject(
         method = "renderTooltipInternal",
         at = @At("HEAD"),
         cancellable = true,
-        remap = true
+        remap = true,
+        require = 1
     )
     private void onRenderTooltipInternal(
             Font font, 
@@ -60,30 +62,9 @@ public abstract class TooltipRenderMixin {
             int mouseY, 
             ClientTooltipPositioner positioner, 
             CallbackInfo ci) {
-        
-        // 渲染时机优化：检查游戏状态
-        if (!shouldProcessTooltipRendering()) {
-            return;
-        }
-        
-        // 事件处理优化：早期退出机制
-        if (tooltipBlockedThisFrame) {
-            ci.cancel();
-            return;
-        }
-        
-        // 更新缓存引用
-        updateCachedReferences();
-        
-        if (cachedScreen != null) {
-            // 使用缓存优化的槽位检测
-            Slot hoveredSlot = findSlotUnderMouseWithCache(cachedScreen, mouseX, mouseY);
-            if (hoveredSlot != null && shouldBlockTooltipOptimized(hoveredSlot)) {
-                tooltipBlockedThisFrame = true;
-                ci.cancel();
-            }
-        }
+        // 已移除Mixin拦截逻辑，交由事件系统处理
     }
+    */
 
     /**
      * 使用缓存优化的槽位检测
@@ -248,13 +229,8 @@ public abstract class TooltipRenderMixin {
      */
     @Unique
     private static void resetFrameState() {
-        tooltipBlockedThisFrame = false;
+        org.yanbwe.searchcarefully.client.ClientOverlayRenderer.setTooltipBlocked(false);
     }
     
-    /**
-     * 公共静态方法供外部调用重置状态
-     */
-    public static void resetTooltipState() {
-        resetFrameState();
-    }
+
 }

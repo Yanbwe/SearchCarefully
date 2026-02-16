@@ -6,10 +6,10 @@
   "refmap": "searchcarefully.refmap.json",
   "mixins": [
     "ChestMenuAccessor",
-    "ContainerAccessMixin",
     "SlotMixin"
   ],
   "client": [
+    "ContainerAccessMixin",
     "SlotRenderMixin",
     "ContainerScreenRenderMixin",
     "GuiHotbarRenderMixin",

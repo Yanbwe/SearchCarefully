@@ -27,6 +27,9 @@ public class ClientOverlayRenderer {
     
     // 跟踪当前客户端正在搜索的槽位
     private static final java.util.Set<Slot> activeSearchSlots = new java.util.HashSet();
+    
+    // 跟踪工具提示拦截状态
+    private static boolean tooltipBlockedThisFrame = false;
 
     @SubscribeEvent
     public static void onScreenRenderPre(ScreenEvent.Render.Pre event) {
@@ -41,7 +44,8 @@ public class ClientOverlayRenderer {
     }
 
     // 添加工具提示事件处理，用于隐藏正在搜索的物品的工具提示
-    @SubscribeEvent(priority = EventPriority.HIGH)
+    // 使用最高优先级确保在Obscure Tooltips之前执行
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void onRenderTooltip(RenderTooltipEvent event) {
         Minecraft mc = Minecraft.getInstance();
         if (mc.screen instanceof AbstractContainerScreen) {
@@ -50,6 +54,7 @@ public class ClientOverlayRenderer {
             // 使用mixin获取悬停的槽位
             Slot hoveredSlot = ((ContainerAccessMixin) screen).getHoveredSlot();
             
+            // 检查槽位是否正在搜索
             if (hoveredSlot != null && isSlotBeingSearched(hoveredSlot)) {
                 // 如果槽位正在搜索中，取消工具提示的渲染
                 event.setCanceled(true);
@@ -162,6 +167,20 @@ public class ClientOverlayRenderer {
      * 重置工具提示帧状态
      */
     private static void resetTooltipFrameState() {
-        org.yanbwe.searchcarefully.mixin.TooltipRenderMixin.resetTooltipState();
+        tooltipBlockedThisFrame = false;
+    }
+    
+    /**
+     * 设置工具提示拦截状态
+     */
+    public static void setTooltipBlocked(boolean blocked) {
+        tooltipBlockedThisFrame = blocked;
+    }
+    
+    /**
+     * 检查是否应该拦截工具提示
+     */
+    public static boolean isTooltipBlocked() {
+        return tooltipBlockedThisFrame;
     }
 }
