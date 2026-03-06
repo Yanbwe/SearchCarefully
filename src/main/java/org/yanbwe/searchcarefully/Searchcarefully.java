@@ -5,6 +5,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegisterCommandsEvent;
@@ -39,6 +40,16 @@ import net.minecraft.world.entity.ai.attributes.RangedAttribute;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.network.chat.Component;
+import net.minecraftforge.registries.RegistryObject;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.PotionItem;
+import net.minecraft.world.item.alchemy.Potion;
+import net.minecraft.world.item.alchemy.PotionUtils;
 
 // 此处的值应与META-INF/mods.toml文件中的条目匹配
 @Mod(Searchcarefully.MODID)
@@ -81,10 +92,67 @@ public class Searchcarefully {
         ATTRIBUTES.register("search_speed", () -> 
             new RangedAttribute("attribute.name.searchcarefully.search_speed", 
                                1.0D,   // 默认值
-                               0.1D,   // 最小值
-                               10.0D)  // 最大值
+                               0.0D,   // 最小值
+                               100.0D)  // 最大值
                                .setSyncable(true) // 启用网络同步
         );
+    
+    // 药水效果注册
+    public static final DeferredRegister<MobEffect> MOB_EFFECTS =
+        DeferredRegister.create(ForgeRegistries.MOB_EFFECTS, MODID);
+        
+    public static final RegistryObject<MobEffect> SEARCH_SPEED_BOOST = 
+        MOB_EFFECTS.register("search_speed_boost", () -> new org.yanbwe.searchcarefully.effects.SearchSpeedBoostEffect());
+    
+    // 搜索速度降低效果
+    public static final RegistryObject<MobEffect> SEARCH_SPEED_LESS = 
+        MOB_EFFECTS.register("search_speed_less", () -> new org.yanbwe.searchcarefully.effects.SearchSpeedLessEffect());
+    
+    // 药水配方注册（Potion）
+    public static final DeferredRegister<Potion> POTIONS =
+        DeferredRegister.create(ForgeRegistries.POTIONS, MODID);
+    
+    // 搜索速度提升药水配方（等级 I-V）
+    public static final RegistryObject<Potion> SEARCH_SPEED_POTION_1 = POTIONS.register("search_speed_boost_1",
+        () -> new Potion(new MobEffectInstance(SEARCH_SPEED_BOOST.get(), 12000, 0)));
+    
+    public static final RegistryObject<Potion> SEARCH_SPEED_POTION_2 = POTIONS.register("search_speed_boost_2",
+        () -> new Potion(new MobEffectInstance(SEARCH_SPEED_BOOST.get(), 12000, 1)));
+    
+    public static final RegistryObject<Potion> SEARCH_SPEED_POTION_3 = POTIONS.register("search_speed_boost_3",
+        () -> new Potion(new MobEffectInstance(SEARCH_SPEED_BOOST.get(), 12000, 2)));
+    
+    public static final RegistryObject<Potion> SEARCH_SPEED_POTION_4 = POTIONS.register("search_speed_boost_4",
+        () -> new Potion(new MobEffectInstance(SEARCH_SPEED_BOOST.get(), 12000, 3)));
+    
+    public static final RegistryObject<Potion> SEARCH_SPEED_POTION_5 = POTIONS.register("search_speed_boost_5",
+        () -> new Potion(new MobEffectInstance(SEARCH_SPEED_BOOST.get(), 12000, 4)));
+    
+    // 搜索速度降低药水配方（等级 II）
+    public static final RegistryObject<Potion> SEARCH_SPEED_LESS_POTION_2 = POTIONS.register("search_speed_less_2",
+        () -> new Potion(new MobEffectInstance(SEARCH_SPEED_LESS.get(), 12000, 1)));
+    
+    // 不需要注册药水物品，直接使用原版的 minecraft:potion
+    
+    // 创造模式标签页注册（必须在药水物品之后定义）
+    public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS =
+        DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
+        
+    public static final RegistryObject<CreativeModeTab> SEARCHCAREFULLY_TAB = CREATIVE_MODE_TABS.register("searchcarefully_tab", () ->
+        CreativeModeTab.builder()
+            .title((Component.translatable("itemGroup.searchcarefully.searchcarefully_tab")))
+            .icon(() -> new ItemStack(Items.COMPASS)) // 使用指南针作为图标
+            .displayItems((parameters, output) -> {
+                // 添加药水到标签页（使用原版 minecraft:potion + NBT）
+                output.accept(PotionUtils.setPotion(new ItemStack(Items.POTION), SEARCH_SPEED_POTION_1.get()));
+                output.accept(PotionUtils.setPotion(new ItemStack(Items.POTION), SEARCH_SPEED_POTION_2.get()));
+                output.accept(PotionUtils.setPotion(new ItemStack(Items.POTION), SEARCH_SPEED_POTION_3.get()));
+                output.accept(PotionUtils.setPotion(new ItemStack(Items.POTION), SEARCH_SPEED_POTION_4.get()));
+                output.accept(PotionUtils.setPotion(new ItemStack(Items.POTION), SEARCH_SPEED_POTION_5.get()));
+                output.accept(PotionUtils.setPotion(new ItemStack(Items.POTION), SEARCH_SPEED_LESS_POTION_2.get()));
+            })
+            .build()
+    );
 
     public Searchcarefully() {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
@@ -94,6 +162,15 @@ public class Searchcarefully {
             
         // 注册属性
         ATTRIBUTES.register(modEventBus);
+            
+        // 注册创造模式标签页
+        CREATIVE_MODE_TABS.register(modEventBus);
+            
+        // 注册药水效果
+        MOB_EFFECTS.register(modEventBus);
+            
+        // 注册药水配方
+        POTIONS.register(modEventBus);
             
         // 注册全局战利品修饰符
         GLOBAL_LOOT_MODIFIERS.register(modEventBus);
@@ -115,6 +192,7 @@ public class Searchcarefully {
         LOGGER.info("SearchCarefully mod initialized - Global Loot Modifier registered");
         LOGGER.info("Modifier codec: {}", AddSearchTimeLootModifier.CODEC.toString());
         LOGGER.info("Player search speed attribute registered");
+        LOGGER.info("Search speed potions registered");
     }
 
     // 你可以使用SubscribeEvent，让事件总线发现要调用的方法

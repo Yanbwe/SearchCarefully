@@ -8,5 +8,20 @@
   "sound.searchcarefully.search_completion_rarity_7": "Search Completion (Rarity 7)",
   "commands.searchcarefully.clear.success": "Attempted to clear search tags from inventory",
   "commands.searchcarefully.clear.not_player": "Only players can use this command",
-  "attribute.name.searchcarefully.search_speed": "Search Speed"
+  "attribute.name.searchcarefully.search_speed": "Search Speed",
+  "itemGroup.searchcarefully.searchcarefully_tab": "Search Carefully",
+  "effect.searchcarefully.search_speed_boost": "Search Speed Boost",
+  "effect.searchcarefully.search_speed_less": "Search Speed Reduction",
+  "potion.withAmplifier": "%1$s %2$s",
+  "potion.potency.0": "I",
+  "potion.potency.1": "II",
+  "potion.potency.2": "III",
+  "potion.potency.3": "IV",
+  "potion.potency.4": "V",
+  "item.minecraft.potion.effect.search_speed_boost_1": "Search Speed Potion I",
+  "item.minecraft.potion.effect.search_speed_boost_2": "Search Speed Potion II",
+  "item.minecraft.potion.effect.search_speed_boost_3": "Search Speed Potion III",
+  "item.minecraft.potion.effect.search_speed_boost_4": "Search Speed Potion IV",
+  "item.minecraft.potion.effect.search_speed_boost_5": "Search Speed Potion V",
+  "item.minecraft.potion.effect.search_speed_less_2": "Search Speed Reduction Potion II"
 }

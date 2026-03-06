@@ -8,5 +8,20 @@
   "sound.searchcarefully.search_completion_rarity_7": "搜索完成（稀有度 7）",
   "commands.searchcarefully.clear.success": "已尝试清除身上的搜索标签",
   "commands.searchcarefully.clear.not_player": "只有玩家可以使用此命令",
-  "attribute.name.searchcarefully.search_speed": "搜索速度"
+  "attribute.name.searchcarefully.search_speed": "搜索速度",
+  "itemGroup.searchcarefully.searchcarefully_tab": "谨慎搜索",
+  "effect.searchcarefully.search_speed_boost": "搜索速度提升",
+  "effect.searchcarefully.search_speed_less": "搜索速度降低",
+  "potion.withAmplifier": "%1$s %2$s",
+  "potion.potency.0": "I",
+  "potion.potency.1": "II",
+  "potion.potency.2": "III",
+  "potion.potency.3": "IV",
+  "potion.potency.4": "V",
+  "item.minecraft.potion.effect.search_speed_boost_1": "搜索速度提升药水 I",
+  "item.minecraft.potion.effect.search_speed_boost_2": "搜索速度提升药水 II",
+  "item.minecraft.potion.effect.search_speed_boost_3": "搜索速度提升药水 III",
+  "item.minecraft.potion.effect.search_speed_boost_4": "搜索速度提升药水 IV",
+  "item.minecraft.potion.effect.search_speed_boost_5": "搜索速度提升药水 V",
+  "item.minecraft.potion.effect.search_speed_less_2": "搜索速度降低药水 II"
 }
