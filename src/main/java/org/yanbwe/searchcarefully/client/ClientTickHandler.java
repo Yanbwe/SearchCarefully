@@ -9,6 +9,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.yanbwe.searchcarefully.network.NetworkHandler;
 import org.yanbwe.searchcarefully.network.SearchProgressPacket;
+import org.yanbwe.searchcarefully.util.ItemStackHelper;
 import org.yanbwe.searchcarefully.util.SearchConstants;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 
@@ -53,12 +54,12 @@ public class ClientTickHandler {
     }
     
     private static boolean hasSearchTime(ItemStack stack) {
-        if (stack.isEmpty() || !stack.hasTag()) {
+        if (stack.isEmpty()) {
             return false;
         }
         
-        return stack.getTag().contains(SearchConstants.SEARCH_TIME_REMAINING) &&
-               stack.getTag().getInt(SearchConstants.SEARCH_TIME_REMAINING) > 0;
+        return ItemStackHelper.hasRemainingSearchTime(stack) &&
+               ItemStackHelper.getRemainingSearchTime(stack) > 0;
     }
     
 

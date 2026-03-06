@@ -31,6 +31,7 @@ import org.yanbwe.searchcarefully.commands.ClearSearchTagsCommand;
 import org.yanbwe.searchcarefully.loot.AddSearchTimeLootModifier;
 import org.yanbwe.searchcarefully.network.NetworkHandler;
 import org.yanbwe.searchcarefully.sounds.SearchCompletionSound;
+import org.yanbwe.searchcarefully.util.ItemStackHelper;
 import org.yanbwe.searchcarefully.util.SearchConstants;
 
 // 此处的值应与META-INF/mods.toml文件中的条目匹配
@@ -110,72 +111,55 @@ public class Searchcarefully {
         if (!Config.ENABLE_SEARCH_SYSTEM.get()) {
             return;
         }
-        
+            
         // 获取玩家正在交互的容器 - 直接检查玩家当前打开的容器
         if (player.containerMenu != null) {
             var slots = player.containerMenu.slots;
             if (slotIndex >= 0 && slotIndex < slots.size()) {
                 var slot = slots.get(slotIndex);
                 ItemStack stack = slot.getItem();
-                
-                if (stack.hasTag()) {
-                    CompoundTag tag = stack.getTag();
-                    if (tag.contains(SearchConstants.SEARCH_TIME_REMAINING)) {
-                        int remainingTime = tag.getInt(SearchConstants.SEARCH_TIME_REMAINING);
+                    
+                // 使用封装的工具方法检查和减少搜索时间
+                if (ItemStackHelper.hasRemainingSearchTime(stack)) {
+                    // 计算减少量并更新搜索时间
+                    double speed = Config.SEARCH_SPEED_MULTIPLIER.get();
+                    int decrement = Math.max(1, (int) Math.ceil(speed));
+                    int remainingTime = ItemStackHelper.decrementSearchTime(stack, decrement);
                         
-                        // 减少搜索时间，但遵守速度倍数和配置设置
-                        double speed = Config.SEARCH_SPEED_MULTIPLIER.get();
-                        // 使用速度乘数来决定每次减少多少，而不是总是减少1
-                        int decrement = Math.max(1, (int) Math.ceil(speed)); // 至少减少1
+                    // 更新槽位中的物品
+                    slot.set(stack);
                         
-                        remainingTime = Math.max(0, remainingTime - decrement);
-                        
-                        tag.putInt(SearchConstants.SEARCH_TIME_REMAINING, remainingTime);
-                        
-                        // 用新的标签更新物品堆栈
+                    // 如果搜索完成，播放音效并清理 NBT 标签
+                    if (remainingTime <= 0) {
+                        // 获取物品的稀有度
+                        int rarity = RarityRegistry.getNormalizedRarity(stack.getItem());
+                            
+                        // 获取容器的物理位置以实现正确的 3D 空间音效
+                        double x = player.getX();
+                        double y = player.getY();
+                        double z = player.getZ();
+    
+                        // 物品搜索完成，根据稀有度播放音效
+                        org.yanbwe.searchcarefully.sounds.SoundHandler.playSearchCompletionSound(
+                            player.level(), x, y, z, rarity
+                        );
+                            
+                        // 使用封装的工具方法完成搜索
+                        ItemStackHelper.completeSearch(stack);
+                            
+                        // 用清理后的物品更新槽位
                         slot.set(stack);
-                        
-                        // 如果搜索完成，播放音效并清理NBT标签
-                        if (remainingTime <= 0) {
-                            // 获取物品的稀有度
-                            int rarity = RarityRegistry.getNormalizedRarity(stack.getItem());
-                            
-                            // 获取容器的物理位置以实现正确的3D空间音效
-                            // 从容器的实际位置播放音效，而非玩家位置
-                            double x = player.getX();
-                            double y = player.getY();
-                            double z = player.getZ();
-
-                            // 物品搜索完成，根据稀有度播放音效
-                            org.yanbwe.searchcarefully.sounds.SoundHandler.playSearchCompletionSound(
-                                player.level(), x, y, z, rarity
-                            );
-                            
-                            // 清除搜索时间NBT标签，使物品能够正常堆叠
-                            tag.remove(SearchConstants.SEARCH_TIME_REMAINING);
-                            
-                            // 如果标签为空，完全移除标签以确保最佳兼容性
-                            if (tag.isEmpty()) {
-                                stack.setTag(null);
-                            }
-                            
-                            // 用清理后的物品更新槽位
-                            slot.set(stack);
-                        }
                     }
                 }
             }
         }
     }
 
-    // 你可以使用EventBusSubscriber自动注册类中所有用@SubscribeEvent注解的静态方法
     @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
     public static class ClientModEvents {
 
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {
-            // 一些客户端设置代码
-            LOGGER.info("HELLO FROM CLIENT SETUP");
         }
     }
 }

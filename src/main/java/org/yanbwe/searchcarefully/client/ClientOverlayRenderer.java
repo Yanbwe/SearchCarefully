@@ -17,6 +17,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.yanbwe.searchcarefully.Searchcarefully;
 import org.yanbwe.searchcarefully.mixin.ContainerAccessMixin;
+import org.yanbwe.searchcarefully.util.ItemStackHelper;
 import org.yanbwe.searchcarefully.util.SearchConstants;
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.FORGE)
@@ -86,8 +87,8 @@ public class ClientOverlayRenderer {
                 for (Slot slot : screen.getMenu().slots) {
                     if (slot.hasItem()) {
                         ItemStack stack = slot.getItem();
-                        if (stack.hasTag() && stack.getTag().contains(SearchConstants.SEARCH_TIME_REMAINING)) {
-                            int searchTime = stack.getTag().getInt(SearchConstants.SEARCH_TIME_REMAINING);
+                        if (ItemStackHelper.hasRemainingSearchTime(stack)) {
+                            int searchTime = ItemStackHelper.getRemainingSearchTime(stack);
                             if (searchTime > 0) {
                                 activeSearchSlots.add(slot);
                             }

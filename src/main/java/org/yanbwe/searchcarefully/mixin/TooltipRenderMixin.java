@@ -15,6 +15,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.yanbwe.searchcarefully.client.ClientOverlayRenderer;
 import org.yanbwe.searchcarefully.util.ItemStackHelper;
+import org.yanbwe.searchcarefully.util.SearchConstants;
 
 import java.util.List;
 
@@ -120,16 +121,9 @@ public abstract class TooltipRenderMixin {
         
         ItemStack stack = slot.getItem();
         
-        // 快速检查：无标签直接返回
-        if (!stack.hasTag()) return false;
-        
-        // 快速检查：检查特定标识而非完整解析
-        if (!stack.getTag().contains("SearchTimeRemaining")) {
-            return false;
-        }
-        
-        // 只有通过快速检查才进行完整验证
-        return ItemStackHelper.getRemainingSearchTime(stack) > 0;
+        // 使用封装的工具方法进行检查，简化逻辑
+        return ItemStackHelper.hasRemainingSearchTime(stack) &&
+               ItemStackHelper.getRemainingSearchTime(stack) > 0;
     }
     
     /**

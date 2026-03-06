@@ -11,6 +11,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 // ContainerScreenRenderMixin中不再需要直接调用RarityRegistry
 import org.yanbwe.searchcarefully.animation.RotationAnimationHandler;
 import org.yanbwe.searchcarefully.textures.CustomTextureHandler;
+import org.yanbwe.searchcarefully.util.SearchConstants;
 import org.yanbwe.searchcarefully.util.SlotRenderCache;
 
 @Mixin(GuiGraphics.class)
@@ -23,8 +24,8 @@ public abstract class ContainerScreenRenderMixin {
      * 处理GUI中物品的搜索遮罩和旋转动画渲染
      */
     private void renderSearchMask(ItemStack itemStack, int x, int y) {
-        if (!itemStack.isEmpty() && itemStack.hasTag() && itemStack.getTag().contains("SearchTimeRemaining")) {
-            int remainingTime = itemStack.getTag().getInt("SearchTimeRemaining");
+        if (!itemStack.isEmpty() && itemStack.hasTag() && itemStack.getTag().contains(SearchConstants.SEARCH_TIME_REMAINING)) {
+            int remainingTime = itemStack.getTag().getInt(SearchConstants.SEARCH_TIME_REMAINING);
             if (remainingTime > 0) {
                 GuiGraphics guiGraphics = (GuiGraphics)(Object)this;
                 

@@ -11,6 +11,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
+import org.yanbwe.searchcarefully.util.ItemStackHelper;
 import org.yanbwe.searchcarefully.util.SearchConstants;
 
 public class ClearSearchTagsCommand {
@@ -75,22 +76,12 @@ public class ClearSearchTagsCommand {
     }
     
     private static boolean clearItemSearchTag(ItemStack stack) {
-        if (stack.isEmpty() || !stack.hasTag()) {
+        if (stack.isEmpty() || !ItemStackHelper.hasRemainingSearchTime(stack)) {
             return false;
         }
         
-        CompoundTag tag = stack.getTag();
-        if (tag.contains(SearchConstants.SEARCH_TIME_REMAINING)) {
-            tag.remove(SearchConstants.SEARCH_TIME_REMAINING);
-            
-            // 如果标签为空，完全移除标签
-            if (tag.isEmpty()) {
-                stack.setTag(null);
-            }
-            
-            return true;
-        }
-        
-        return false;
+        // 使用封装的工具方法完成搜索并清理标签
+        ItemStackHelper.completeSearch(stack);
+        return true;
     }
 }

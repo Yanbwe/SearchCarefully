@@ -8,6 +8,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.yanbwe.searchcarefully.util.ItemStackHelper;
 import org.yanbwe.searchcarefully.util.SearchConstants;
 
 @Mixin(Slot.class)
@@ -29,11 +30,11 @@ public class SlotMixin {
     private void mayPickup(Player player, CallbackInfoReturnable<Boolean> cir) {
         ItemStack stack = this.getItem();
         
-        // Check if the item has a remaining search time
-        if (stack.hasTag() && stack.getTag().contains(SearchConstants.SEARCH_TIME_REMAINING)) {
-            int searchTime = stack.getTag().getInt(SearchConstants.SEARCH_TIME_REMAINING);
+        // 使用封装的工具方法检查搜索时间
+        if (ItemStackHelper.hasRemainingSearchTime(stack)) {
+            int searchTime = ItemStackHelper.getRemainingSearchTime(stack);
             
-            // If search time is greater than 0, prevent the player from picking up the item
+            // 如果搜索时间大于 0，阻止玩家拿起物品
             if (searchTime > 0) {
                 cir.cancel();
                 cir.setReturnValue(false);
