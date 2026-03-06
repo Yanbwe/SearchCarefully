@@ -23,7 +23,7 @@ public class SlotRenderMixin {
         // 检查槽位是否有物品且需要搜索
         ItemStack itemStack = slot.getItem();
         if (!itemStack.isEmpty() && ItemStackHelper.hasRemainingSearchTime(itemStack)) {
-            int searchTime = ItemStackHelper.getRemainingSearchTime(itemStack);
+            int searchTime = (int) ItemStackHelper.getRemainingSearchTime(itemStack);
             
             if (searchTime > 0) {
                 // 将需要渲染遮罩的槽位信息添加到缓存中

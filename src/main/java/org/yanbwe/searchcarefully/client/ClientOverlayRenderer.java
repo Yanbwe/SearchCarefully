@@ -88,7 +88,7 @@ public class ClientOverlayRenderer {
                     if (slot.hasItem()) {
                         ItemStack stack = slot.getItem();
                         if (ItemStackHelper.hasRemainingSearchTime(stack)) {
-                            int searchTime = ItemStackHelper.getRemainingSearchTime(stack);
+                            int searchTime = (int) ItemStackHelper.getRemainingSearchTime(stack);
                             if (searchTime > 0) {
                                 activeSearchSlots.add(slot);
                             }

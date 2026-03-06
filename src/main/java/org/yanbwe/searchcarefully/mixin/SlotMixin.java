@@ -32,7 +32,7 @@ public class SlotMixin {
         
         // 使用封装的工具方法检查搜索时间
         if (ItemStackHelper.hasRemainingSearchTime(stack)) {
-            int searchTime = ItemStackHelper.getRemainingSearchTime(stack);
+            int searchTime = (int) ItemStackHelper.getRemainingSearchTime(stack);
             
             // 如果搜索时间大于 0，阻止玩家拿起物品
             if (searchTime > 0) {

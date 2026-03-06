@@ -1,11 +1,12 @@
 {
-  "sound.searchcarefully.search_completion_rarity_1": "搜索完成（稀有度1）",
-  "sound.searchcarefully.search_completion_rarity_2": "搜索完成（稀有度2）",
-  "sound.searchcarefully.search_completion_rarity_3": "搜索完成（稀有度3）",
-  "sound.searchcarefully.search_completion_rarity_4": "搜索完成（稀有度4）",
-  "sound.searchcarefully.search_completion_rarity_5": "搜索完成（稀有度5）",
-  "sound.searchcarefully.search_completion_rarity_6": "搜索完成（稀有度6）",
-  "sound.searchcarefully.search_completion_rarity_7": "搜索完成（稀有度7）",
+  "sound.searchcarefully.search_completion_rarity_1": "搜索完成（稀有度 1）",
+  "sound.searchcarefully.search_completion_rarity_2": "搜索完成（稀有度 2）",
+  "sound.searchcarefully.search_completion_rarity_3": "搜索完成（稀有度 3）",
+  "sound.searchcarefully.search_completion_rarity_4": "搜索完成（稀有度 4）",
+  "sound.searchcarefully.search_completion_rarity_5": "搜索完成（稀有度 5）",
+  "sound.searchcarefully.search_completion_rarity_6": "搜索完成（稀有度 6）",
+  "sound.searchcarefully.search_completion_rarity_7": "搜索完成（稀有度 7）",
   "commands.searchcarefully.clear.success": "已尝试清除身上的搜索标签",
-  "commands.searchcarefully.clear.not_player": "只有玩家可以使用此命令"
+  "commands.searchcarefully.clear.not_player": "只有玩家可以使用此命令",
+  "attribute.name.searchcarefully.search_speed": "搜索速度"
 }

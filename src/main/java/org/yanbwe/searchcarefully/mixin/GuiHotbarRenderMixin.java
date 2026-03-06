@@ -29,12 +29,12 @@ public class GuiHotbarRenderMixin {
         if (mc.player != null) {
             Inventory inventory = mc.player.getInventory();
             
-            // 遍历热键栏的所有槽位（索引0-8）
+            // 遍历热键栏的所有槽位（索引 0-8）
             for (int i = 0; i < 9; i++) {
                 ItemStack itemStack = inventory.getItem(i);
-                
+                            
                 if (!itemStack.isEmpty() && ItemStackHelper.hasRemainingSearchTime(itemStack)) {
-                    int searchTime = ItemStackHelper.getRemainingSearchTime(itemStack);
+                    int searchTime = (int) ItemStackHelper.getRemainingSearchTime(itemStack);
                     
                     if (searchTime > 0) {
                         // 计算热键栏中对应槽位的位置

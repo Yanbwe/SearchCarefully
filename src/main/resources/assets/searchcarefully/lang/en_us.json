@@ -7,5 +7,6 @@
   "sound.searchcarefully.search_completion_rarity_6": "Search Completion (Rarity 6)",
   "sound.searchcarefully.search_completion_rarity_7": "Search Completion (Rarity 7)",
   "commands.searchcarefully.clear.success": "Attempted to clear search tags from inventory",
-  "commands.searchcarefully.clear.not_player": "Only players can use this command"
+  "commands.searchcarefully.clear.not_player": "Only players can use this command",
+  "attribute.name.searchcarefully.search_speed": "Search Speed"
 }

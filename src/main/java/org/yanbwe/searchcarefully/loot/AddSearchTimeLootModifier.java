@@ -66,21 +66,21 @@ public class AddSearchTimeLootModifier extends LootModifier {
                 if (!stack.isEmpty()) {
                     // 获取物品的稀有度
                     int rarity = RarityRegistry.getNormalizedRarity(stack.getItem());
-                    
+                                    
                     // 根据稀有度计算基础搜索时间
-                    int baseSearchTime = SearchConstants.getSearchTimeByRarity(rarity);
-                    
-                    // 如果物品具有有效稀有度，则将搜索时间作为NBT标签添加
+                    double baseSearchTime = SearchConstants.getSearchTimeByRarity(rarity);
+                                    
+                    // 如果物品具有有效稀有度，则将搜索时间作为 NBT 标签添加
                     if (baseSearchTime > 0 && rarity >= 1 && rarity <= 7) {
-                        // 获取该稀有度对应的随机时间，确保非负值
-                        int randomTime = Math.max(0, Config.RARITY_RANDOM_TIMES[rarity].get());
-                        
-                        // 添加随机时间，范围是 [-randomTime, +randomTime]，但确保最终结果至少为1
-                        int randomAddition = random.nextInt(Math.max(1, randomTime * 2 + 1)) - randomTime;
-                        int finalSearchTime = Math.max(1, baseSearchTime + randomAddition); // 确保至少为1
-                        
+                        // 获取该稀有度对应的随机时间范围
+                        double randomTimeRange = Config.RARITY_RANDOM_TIMES[rarity].get();
+                                        
+                        // 添加随机时间，范围是 [-randomTimeRange, +randomTimeRange]，但确保最终结果至少为 1.0
+                        double randomAddition = (random.nextDouble() * 2 - 1) * randomTimeRange;
+                        double finalSearchTime = Math.max(1.0, baseSearchTime + randomAddition);
+                                        
                         var tag = stack.getOrCreateTag();
-                        tag.putInt(SearchConstants.SEARCH_TIME_REMAINING, finalSearchTime);
+                        tag.putDouble(SearchConstants.SEARCH_TIME_REMAINING, finalSearchTime);
                         stack.setTag(tag);
                     }
                 }

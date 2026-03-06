@@ -46,7 +46,7 @@ public class SlotRenderCache {
     public static void addSlotOverlay(AbstractContainerScreen<?> screen, Slot slot) {
         ItemStack itemStack = slot.getItem();
         if (!itemStack.isEmpty() && ItemStackHelper.hasRemainingSearchTime(itemStack)) {
-            int searchTime = ItemStackHelper.getRemainingSearchTime(itemStack);
+            int searchTime = (int) ItemStackHelper.getRemainingSearchTime(itemStack);
             if (searchTime > 0) {
                 int x = screen.getGuiLeft() + slot.x;
                 int y = screen.getGuiTop() + slot.y;

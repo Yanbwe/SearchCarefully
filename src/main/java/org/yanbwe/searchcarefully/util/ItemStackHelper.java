@@ -18,19 +18,41 @@ public class ItemStackHelper {
     
     /**
      * 获取物品堆叠的剩余搜索时间
+     * 
+     * @param stack 物品堆叠
+     * @return 剩余搜索时间（double 类型）
      */
-    public static int getRemainingSearchTime(ItemStack stack) {
+    public static double getRemainingSearchTime(ItemStack stack) {
         if (hasRemainingSearchTime(stack)) {
-            return stack.getTag().getInt(SearchConstants.SEARCH_TIME_REMAINING);
+            CompoundTag tag = stack.getTag();
+            
+            // 优先读取 double (NBT 类型 6)
+            if (tag.contains(SearchConstants.SEARCH_TIME_REMAINING, 6)) {
+                return tag.getDouble(SearchConstants.SEARCH_TIME_REMAINING);
+            }
+            
+            // 兼容旧的 int 格式 (NBT 类型 3)
+            if (tag.contains(SearchConstants.SEARCH_TIME_REMAINING, 3)) {
+                int oldValue = tag.getInt(SearchConstants.SEARCH_TIME_REMAINING);
+                // 升级为 double 并写回
+                tag.putDouble(SearchConstants.SEARCH_TIME_REMAINING, (double) oldValue);
+                stack.setTag(tag);
+                return (double) oldValue;
+            }
+            
+            return 0.0;
         }
-        return 0;
+        return 0.0;
     }
     
     /**
      * 设置物品堆叠的剩余搜索时间
+     * 
+     * @param stack 物品堆叠
+     * @param time 剩余搜索时间（double 类型）
      */
-    public static void setRemainingSearchTime(ItemStack stack, int time) {
-        stack.getOrCreateTag().putInt(SearchConstants.SEARCH_TIME_REMAINING, time);
+    public static void setRemainingSearchTime(ItemStack stack, double time) {
+        stack.getOrCreateTag().putDouble(SearchConstants.SEARCH_TIME_REMAINING, time);
     }
     
     /**
@@ -56,14 +78,14 @@ public class ItemStackHelper {
      * 减少物品的搜索时间
      * 
      * @param stack 物品堆叠
-     * @param amount 要减少的时间量
-     * @return 减少后的剩余时间，如果没有搜索时间则返回 0
+     * @param amount 要减少的时间量（double 类型）
+     * @return 减少后的剩余时间，如果没有搜索时间则返回 0.0
      */
-    public static int decrementSearchTime(ItemStack stack, int amount) {
-        if (!hasRemainingSearchTime(stack)) return 0;
+    public static double decrementSearchTime(ItemStack stack, double amount) {
+        if (!hasRemainingSearchTime(stack)) return 0.0;
         
-        int currentTime = getRemainingSearchTime(stack);
-        int newTime = Math.max(0, currentTime - amount);
+        double currentTime = getRemainingSearchTime(stack);
+        double newTime = Math.max(0.0, currentTime - amount);
         setRemainingSearchTime(stack, newTime);
         return newTime;
     }
