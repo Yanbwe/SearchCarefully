@@ -100,7 +100,7 @@
 #### `chestPathSegments` 
 - 作用：定义用于中间路径匹配的路径片段，为匹配的路径下的战利品表应用搜索时间机制
 - 格式：路径片段字符串列表
-- 默认值：`["chest", "chests"]`
+- 默认值：`["chest", "chests", "block"]`
 - 示例：
   ```toml
   chestPathSegments = ["chest", "chests", "treasure", "loot"]
@@ -108,4 +108,12 @@
 - 说明：
   - 用于匹配路径中间包含这些片段的战利品表
   - 如果你按照示例值写，会匹配：`structures/village/chest`、`modid/special/chests`、`dungeons/treasure_room`
+
+### 热键栏搜索配置
+
+#### `enableHotbarSearch` (布尔值，默认：false)
+- 作用：启用或禁用热键栏物品的搜索功能
+- true：开启热键栏搜索，玩家物品栏中的物品也会自动进行搜索
+- false：关闭热键栏搜索，仅在容器界面中才能进行搜索
+- 注意：此功能独立于容器搜索，关闭时不影响容器内的正常搜索机制
 

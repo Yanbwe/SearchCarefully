@@ -98,10 +98,10 @@ The configuration file is located at `.minecraft/config/searchcarefully-common.t
   - Suitable for mod loot tables using non-standard paths
   - Arbitrary number of custom paths can be added
 
-#### `chestPathSegments` (String List, default: ["chest", "chests"])
+#### `chestPathSegments` (String List, default: ["chest", "chests", "block"])
 - Function: Define path segments for middle-path matching
 - Format: List of path segment strings
-- Default value: `["chest", "chests"]`
+- Default value: `["chest", "chests", "block"]`
 - Example:
   ```toml
   chestPathSegments = ["chest", "chests", "treasure", "loot"]
@@ -111,4 +111,12 @@ The configuration file is located at `.minecraft/config/searchcarefully-common.t
   - For example matches: `structures/village/chest`, `modid/special/chests`, `dungeons/treasure_room`
   - Supports user-defined extensions to adapt to different mod naming conventions
   - Forms a complete matching system with prefix matching (`chest/`, `chests/`) and full path matching
+
+### Hotbar Search Configuration
+
+#### `enableHotbarSearch` (Boolean, default: false)
+- Function: Enable or disable the search functionality for items in the hotbar
+- true: Enables hotbar search, allowing items in the player's inventory hotbar to be searched automatically
+- false: Disables hotbar search; searching only occurs within container interfaces
+- Note: This feature is independent of container search. Disabling it does not affect normal search mechanics within containers
 
