@@ -25,6 +25,9 @@ public class Config {
     // Chest path segments for dynamic matching
     public static ForgeConfigSpec.ConfigValue<List<? extends String>> CHEST_PATH_SEGMENTS;
     
+    // Hotbar search configuration
+    public static ForgeConfigSpec.BooleanValue ENABLE_HOTBAR_SEARCH;
+    
     static {
         BUILDER.push("Search System Configuration");
 
@@ -103,6 +106,12 @@ public class Config {
                 .defineListAllowEmpty(List.of("chestPathSegments"),
                                     () -> List.of("chest", "chests", "block"),
                                     obj -> obj instanceof String s && !s.isEmpty());
+        
+        // Hotbar search configuration
+        ENABLE_HOTBAR_SEARCH = BUILDER
+                .comment("Enable search system for hotbar slots (items in hotbar will be searched automatically)",
+                         "Default: false")
+                .define("enableHotbarSearch", false);
 
         BUILDER.pop();
         SPEC = BUILDER.build();

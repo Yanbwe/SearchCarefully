@@ -254,6 +254,116 @@ public class Searchcarefully {
         }
     }
     
+    /**
+     * 处理热键栏物品的搜索进度
+     * 
+     * @param player 玩家实体
+     * @param hotbarSlotIndex 热键栏槽位索引（0-8）
+     */
+    public static void handleHotbarSearchProgress(Player player, int hotbarSlotIndex) {
+        if (!Config.ENABLE_SEARCH_SYSTEM.get() || !Config.ENABLE_HOTBAR_SEARCH.get()) {
+            return;
+        }
+        
+        // 检查热键栏索引范围
+        if (hotbarSlotIndex < 0 || hotbarSlotIndex > 8) {
+            return;
+        }
+        
+        // 获取玩家的物品栏
+        var inventory = player.getInventory();
+        ItemStack stack = inventory.getItem(hotbarSlotIndex);
+        
+        // 检查是否是占位物品
+        if (org.yanbwe.searchcarefully.item.SearchPlaceholderItem.isPlaceholder(stack)) {
+            handleHotbarPlaceholderSearch(player, hotbarSlotIndex, stack);
+        }
+        // 使用封装的工具方法检查和减少搜索时间（原有逻辑）
+        else if (ItemStackHelper.hasRemainingSearchTime(stack)) {
+            // 计算减少量并更新搜索时间
+            double configSpeed = Config.SEARCH_SPEED_MULTIPLIER.get();
+            double playerSearchSpeed = getPlayerSearchSpeed(player);
+            
+            // 实际减少量 = 基础值 × 配置倍率 × 玩家属性
+            double baseDecrement = 1.0;
+            double actualDecrement = baseDecrement * configSpeed * playerSearchSpeed;
+            
+            // 确保至少减少一个很小的值（避免除零或负数）
+            actualDecrement = Math.max(0.1, actualDecrement);
+            
+            double remainingTime = ItemStackHelper.decrementSearchTime(stack, actualDecrement);
+            
+            // 如果搜索完成，播放音效并清理 NBT 标签
+            if (remainingTime <= 0.0) {
+                // 获取物品的稀有度
+                int rarity = RarityRegistry.getNormalizedRarity(stack.getItem());
+                
+                // 使用玩家位置实现正确的 3D 空间音效
+                double x = player.getX();
+                double y = player.getY();
+                double z = player.getZ();
+
+                // 物品搜索完成，根据稀有度播放音效
+                org.yanbwe.searchcarefully.sounds.SoundHandler.playSearchCompletionSound(
+                    player.level(), x, y, z, rarity
+                );
+                
+                // 使用封装的工具方法完成搜索
+                ItemStackHelper.completeSearch(stack);
+            }
+        }
+    }
+    
+    /**
+     * 处理热键栏占位物品的搜索进度
+     */
+    private static void handleHotbarPlaceholderSearch(Player player, int hotbarSlotIndex, ItemStack placeholderStack) {
+        if (!placeholderStack.hasTag() || !placeholderStack.getTag().contains("SearchTimeRemaining")) {
+            return;
+        }
+        
+        // 计算减少量并更新搜索时间
+        double configSpeed = Config.SEARCH_SPEED_MULTIPLIER.get();
+        double playerSearchSpeed = getPlayerSearchSpeed(player);
+        
+        // 实际减少量 = 基础值 × 配置倍率 × 玩家属性
+        double baseDecrement = 1.0;
+        double actualDecrement = baseDecrement * configSpeed * playerSearchSpeed;
+        
+        // 确保至少减少一个很小的值（避免除零或负数）
+        actualDecrement = Math.max(0.1, actualDecrement);
+        
+        // 获取并减少剩余时间
+        double currentTime = placeholderStack.getTag().getDouble("SearchTimeRemaining");
+        double newTime = Math.max(0.0, currentTime - actualDecrement);
+        placeholderStack.getTag().putDouble("SearchTimeRemaining", newTime);
+        
+        // 如果搜索完成，转换为原物品
+        if (newTime <= 0.0) {
+            // 获取原始物品
+            ItemStack originalItem = org.yanbwe.searchcarefully.item.SearchPlaceholderItem.getOriginalItem(placeholderStack);
+            
+            if (!originalItem.isEmpty()) {
+                // 从原始物品获取稀有度（而不是占位物品）
+                int rarity = RarityRegistry.getNormalizedRarity(originalItem.getItem());
+                
+                // 使用玩家位置实现正确的 3D 空间音效
+                double x = player.getX();
+                double y = player.getY();
+                double z = player.getZ();
+                
+                // 播放搜索完成音效
+                org.yanbwe.searchcarefully.sounds.SoundHandler.playSearchCompletionSound(
+                    player.level(), x, y, z, rarity
+                );
+                
+                // 替换为原物品
+                var inventory = player.getInventory();
+                inventory.setItem(hotbarSlotIndex, originalItem);
+            }
+        }
+    }
+    
     public static void handleSearchProgress(Player player, int slotIndex) {
         if (!Config.ENABLE_SEARCH_SYSTEM.get()) {
             return;

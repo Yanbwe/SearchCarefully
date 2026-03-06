@@ -33,7 +33,7 @@ public class ClientTickHandler {
     private static void sendSearchProgressPackets() {
         Minecraft mc = Minecraft.getInstance();
         
-        // 仅在容器界面中发送数据包
+        // 检查是否打开了容器界面
         if (mc.screen instanceof AbstractContainerScreen) {
             AbstractContainerScreen<?> screen = (AbstractContainerScreen<?>) mc.screen;
             
@@ -45,9 +45,24 @@ public class ClientTickHandler {
                     // 直接检查槽位中的物品是否有搜索时间
                     if (hasSearchTime(slot.getItem())) {
                         // 发送数据包到服务器以指示此槽位正在被搜索
-                        SearchProgressPacket packet = new SearchProgressPacket(i);
+                        SearchProgressPacket packet = new SearchProgressPacket(i, false); // false 表示容器槽位
                         NetworkHandler.INSTANCE.sendToServer(packet);
                     }
+                }
+            }
+        }
+        // 如果没有打开容器，且启用了热键栏搜索
+        else if (org.yanbwe.searchcarefully.Config.ENABLE_HOTBAR_SEARCH.get() && mc.player != null) {
+            // 遍历热键栏的所有槽位（索引 0-8）
+            var inventory = mc.player.getInventory();
+            for (int i = 0; i < 9; i++) {
+                ItemStack itemStack = inventory.getItem(i);
+                
+                // 检查物品是否有搜索时间
+                if (hasSearchTime(itemStack)) {
+                    // 发送数据包到服务器以指示此热键栏槽位正在被搜索
+                    SearchProgressPacket packet = new SearchProgressPacket(i, true); // true 表示热键栏槽位
+                    NetworkHandler.INSTANCE.sendToServer(packet);
                 }
             }
         }
