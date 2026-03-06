@@ -23,5 +23,6 @@
   "item.minecraft.potion.effect.search_speed_boost_3": "Search Speed Potion III",
   "item.minecraft.potion.effect.search_speed_boost_4": "Search Speed Potion IV",
   "item.minecraft.potion.effect.search_speed_boost_5": "Search Speed Potion V",
-  "item.minecraft.potion.effect.search_speed_less_2": "Search Speed Reduction Potion II"
+  "item.minecraft.potion.effect.search_speed_less_2": "Search Speed Reduction Potion II",
+  "item.searchcarefully.search_placeholder": "Searching Item"
 }

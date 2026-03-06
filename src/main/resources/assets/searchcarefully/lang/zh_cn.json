@@ -23,5 +23,6 @@
   "item.minecraft.potion.effect.search_speed_boost_3": "搜索速度提升药水 III",
   "item.minecraft.potion.effect.search_speed_boost_4": "搜索速度提升药水 IV",
   "item.minecraft.potion.effect.search_speed_boost_5": "搜索速度提升药水 V",
-  "item.minecraft.potion.effect.search_speed_less_2": "搜索速度降低药水 II"
+  "item.minecraft.potion.effect.search_speed_less_2": "搜索速度降低药水 II",
+  "item.searchcarefully.search_placeholder": "搜索中的物品"
 }
