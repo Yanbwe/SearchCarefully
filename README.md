@@ -16,8 +16,10 @@
 
 ## Prerequisites  - **RarityCore** [[GitHub](https://github.com/Yanbwe/RarityCore)][[Modrinth](https://modrinth.com/mod/raritycore)][[Curseforge](https://curseforge.com/minecraft/mc-mods/raritycore)]: Required dependency for item rarity identification.
 
-## Configuration Setup
-Refer to [ConfigGuide.md](https://github.com/Yanbwe/SearchCarefully/blob/1.20.1-forge/doc/ConfigGuide_EN.md).
+## 😋Start Use ！
 
-## Resource Pack Creation
-Refer to [ResourcePackGuide.md](https://github.com/Yanbwe/SearchCarefully/blob/1.20.1-forge/doc/ResourcePackGuide_EN.md)
+Want to apply search time to your loot, or modify the player's search speed?  
+Want to customize the visuals of SearchCarefully?     
+Want to use the API of SearchCarefully?     
+Want to use placeholder items for SearchCarefully?  
+**Please refer to this page -> [SearchCarefully Wiki](https://github.com/Yanbwe/SearchCarefully/wiki).**
