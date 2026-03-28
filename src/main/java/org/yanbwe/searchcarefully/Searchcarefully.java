@@ -29,6 +29,7 @@ import com.mojang.serialization.Codec;
 import org.slf4j.Logger;
 import org.yanbwe.raritycore.registry.RarityRegistry;
 import org.yanbwe.searchcarefully.commands.ClearSearchTagsCommand;
+import org.yanbwe.searchcarefully.commands.ApplySearchCommand;
 import org.yanbwe.searchcarefully.loot.AddSearchTimeLootModifier;
 import org.yanbwe.searchcarefully.network.NetworkHandler;
 import org.yanbwe.searchcarefully.sounds.SearchCompletionSound;
@@ -51,6 +52,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.PotionItem;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.alchemy.PotionUtils;
+import net.minecraft.world.level.GameRules;
 
 // 此处的值应与META-INF/mods.toml文件中的条目匹配
 @Mod(Searchcarefully.MODID)
@@ -149,7 +151,7 @@ public class Searchcarefully {
             .displayItems((parameters, output) -> {
                 // 添加占位物品
                 output.accept(new ItemStack(ModItems.SEARCH_PLACEHOLDER.get()));
-                
+
                 // 添加药水到标签页（使用原版 minecraft:potion + NBT）
                 output.accept(PotionUtils.setPotion(new ItemStack(Items.POTION), SEARCH_SPEED_POTION_1.get()));
                 output.accept(PotionUtils.setPotion(new ItemStack(Items.POTION), SEARCH_SPEED_POTION_2.get()));
@@ -160,6 +162,9 @@ public class Searchcarefully {
             })
             .build()
     );
+
+    public static final GameRules.Key<GameRules.BooleanValue> SEARCH_LOOT_MODIFIER_GAMERULE =
+        GameRules.register("searchcarefully:loot_modifier", GameRules.Category.MISC, GameRules.BooleanValue.create(true));
 
     public Searchcarefully() {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
@@ -216,6 +221,7 @@ public class Searchcarefully {
     @SubscribeEvent
     public void onRegisterCommands(RegisterCommandsEvent event) {
         ClearSearchTagsCommand.register(event.getDispatcher());
+        ApplySearchCommand.register(event.getDispatcher());
         LOGGER.info("Registered SearchCarefully commands");
     }
     

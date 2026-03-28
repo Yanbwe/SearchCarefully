@@ -10,6 +10,7 @@ import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.loot.LootModifier;
 import org.jetbrains.annotations.NotNull;
 import org.yanbwe.searchcarefully.Config;
+import org.yanbwe.searchcarefully.Searchcarefully;
 import org.yanbwe.searchcarefully.util.SearchConstants;
 import org.yanbwe.raritycore.registry.RarityRegistry;
 
@@ -27,6 +28,17 @@ public class AddSearchTimeLootModifier extends LootModifier {
 
     @Override
     protected @NotNull ObjectArrayList<ItemStack> doApply(ObjectArrayList<ItemStack> generatedLoot, LootContext context) {
+        if (!Config.ENABLE_SEARCH_SYSTEM.get()) {
+            return generatedLoot;
+        }
+
+        if (context.getLevel() != null) {
+            boolean lootModifierEnabled = context.getLevel().getGameRules().getRule(Searchcarefully.SEARCH_LOOT_MODIFIER_GAMERULE).get();
+            if (!lootModifierEnabled) {
+                return generatedLoot;
+            }
+        }
+
         String lootTablePath = context.getQueriedLootTableId().toString(); // 获取完整资源位置
         String lootTablePathOnly = context.getQueriedLootTableId().getPath(); // 获取路径部分
         

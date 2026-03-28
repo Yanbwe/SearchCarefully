@@ -151,8 +151,8 @@ dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
     
 
-    implementation files('../RarityCore/build/libs/raritycore-1201.9.2.jar')
-    compileOnly files('../RarityCore/build/libs/raritycore-1201.9.2.jar')
+    implementation files('../RarityCore/build/libs/raritycore-1201.12.2.jar')
+    compileOnly files('../RarityCore/build/libs/raritycore-1201.12.2.jar')
     // Example mod dependency with JEI - using fg.deobf() ensures the dependency is remapped to your development mappings
     // The JEI API is declared for compile time use, while the full JEI artifact is used at runtime
     // compileOnly fg.deobf("mezz.jei:jei-${mc_version}-common-api:${jei_version}")
