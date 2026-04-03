@@ -3,6 +3,7 @@ package org.yanbwe.searchcarefully.network;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.network.NetworkEvent;
+import org.yanbwe.searchcarefully.manager.SearchManager;
 
 import java.util.function.Supplier;
 
@@ -32,9 +33,9 @@ public class SearchProgressPacket {
             if (player != null) {
                 // 在服务器端处理搜索进度，根据是否为热键栏槽位调用不同方法
                 if (isHotbarSlot) {
-                    org.yanbwe.searchcarefully.Searchcarefully.handleHotbarSearchProgress(player, slotIndex);
+                    SearchManager.handleHotbarSearchProgress(player, slotIndex);
                 } else {
-                    org.yanbwe.searchcarefully.Searchcarefully.handleSearchProgress(player, slotIndex);
+                    SearchManager.handleSearchProgress(player, slotIndex);
                 }
             }
         });

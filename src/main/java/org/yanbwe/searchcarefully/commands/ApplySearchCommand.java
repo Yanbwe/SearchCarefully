@@ -13,12 +13,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
-import org.yanbwe.searchcarefully.Config;
 import org.yanbwe.searchcarefully.util.ItemStackHelper;
-import org.yanbwe.searchcarefully.util.SearchConstants;
-import org.yanbwe.raritycore.registry.RarityRegistry;
-
-import java.util.Random;
+import org.yanbwe.searchcarefully.util.SearchTimeCalculator;
 
 public class ApplySearchCommand {
 
@@ -60,7 +56,6 @@ public class ApplySearchCommand {
         }
 
         int[] processedCount = {0};
-        Random random = new Random();
 
         for (int i = 0; i < container.getContainerSize(); i++) {
             ItemStack stack = container.getItem(i);
@@ -69,14 +64,9 @@ public class ApplySearchCommand {
                 continue;
             }
 
-            int rarity = RarityRegistry.getNormalizedRarity(stack.getItem());
-            double baseSearchTime = SearchConstants.getSearchTimeByRarity(rarity);
+            double finalSearchTime = SearchTimeCalculator.calculateFinalSearchTime(stack);
 
-            if (baseSearchTime > 0 && rarity >= 1 && rarity <= 7) {
-                double randomTimeRange = Config.RARITY_RANDOM_TIMES[rarity].get();
-                double randomAddition = (random.nextDouble() * 2 - 1) * randomTimeRange;
-                double finalSearchTime = Math.max(1.0, baseSearchTime + randomAddition);
-
+            if (finalSearchTime > 0) {
                 ItemStackHelper.setRemainingSearchTime(stack, finalSearchTime);
                 container.setItem(i, stack);
                 processedCount[0]++;
