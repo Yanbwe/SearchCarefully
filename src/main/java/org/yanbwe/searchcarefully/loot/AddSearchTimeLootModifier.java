@@ -71,6 +71,7 @@ public class AddSearchTimeLootModifier extends LootModifier {
         }
 
         if (isStandardPrefix || hasChestSegment || isCustomPath) {
+            Searchcarefully.LOGGER.debug("Applying search time to loot table: {}", lootTablePath);
             for (ItemStack stack : generatedLoot) {
                 if (!stack.isEmpty()) {
                     SearchTimeCalculator.applySearchTimeToStack(stack);
