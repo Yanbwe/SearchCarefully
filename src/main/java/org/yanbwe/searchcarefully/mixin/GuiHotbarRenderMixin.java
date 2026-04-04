@@ -1,101 +1,59 @@
 package org.yanbwe.searchcarefully.mixin;
 
 import net.minecraft.client.DeltaTracker;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-// GuiHotbarRenderMixin no longer needs to directly call RarityRegistry
 import org.yanbwe.searchcarefully.animation.RotationAnimationHandler;
 import org.yanbwe.searchcarefully.textures.CustomTextureHandler;
 import org.yanbwe.searchcarefully.util.ItemStackHelper;
-import org.yanbwe.searchcarefully.util.SlotRenderCache;
 
 @Mixin(Gui.class)
 public class GuiHotbarRenderMixin {
 
-    // Collect data for search overlay rendering before hotbar rendering
-    @Inject(
-        method = "renderHotbarAndDecorations", 
-        at = @At("HEAD")
-    )
-    private void collectHotbarSearchOverlayData(GuiGraphics guiGraphics, DeltaTracker deltaTracker, CallbackInfo ci) {
-        Minecraft mc = Minecraft.getInstance();
-        
-        if (mc.player != null) {
-            Inventory inventory = mc.player.getInventory();
+    @Inject(method = "renderSlot(Lnet/minecraft/client/gui/GuiGraphics;IILnet/minecraft/client/DeltaTracker;Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/item/ItemStack;I)V",
+            at = @At("TAIL"))
+    private void renderSlotWithSearchMask(GuiGraphics guiGraphics, int x, int y, DeltaTracker deltaTracker, Player player, ItemStack itemStack, int slotIndex, CallbackInfo ci) {
+        if (!itemStack.isEmpty() && ItemStackHelper.hasRemainingSearchTime(itemStack)) {
+            double remainingTime = ItemStackHelper.getRemainingSearchTime(itemStack);
             
-            // Iterate through all hotbar slots (index 0-8)
-            for (int i = 0; i < 9; i++) {
-                ItemStack itemStack = inventory.getItem(i);
-                            
-                if (!itemStack.isEmpty() && ItemStackHelper.hasRemainingSearchTime(itemStack)) {
-                    int searchTime = (int) ItemStackHelper.getRemainingSearchTime(itemStack);
-                    
-                    if (searchTime > 0) {
-                        // Calculate position of corresponding slot in hotbar
-                        int screenWidth = mc.getWindow().getGuiScaledWidth();
-                        int screenHeight = mc.getWindow().getGuiScaledHeight();
-                        int hotbarX = (screenWidth - 182) / 2; // Hotbar texture starting X coordinate
-                        int hotbarY = screenHeight - 22; // Hotbar Y coordinate
-                        int x = hotbarX + i * 20 + 3; // Each slot is 20 pixels wide, internal offset 3 pixels
-                        int y = hotbarY + 3; // Slot internal offset
-                        
-                        // Add hotbar item information that needs mask rendering to cache
-                        SlotRenderCache.addHotbarOverlay(x, y, itemStack, searchTime);
-                    }
-                }
+            if (remainingTime > 0) {
+                renderSearchMask(guiGraphics, x, y);
+                renderRotationAnimation(guiGraphics, x, y, remainingTime);
             }
         }
     }
 
-    // Unified rendering of search overlays after hotbar rendering completes
-    @Inject(
-        method = "renderHotbarAndDecorations", 
-        at = @At("TAIL")
-    )
-    private void renderHotbarSearchOverlays(GuiGraphics guiGraphics, DeltaTracker deltaTracker, CallbackInfo ci) {
-        // Render all hotbar overlays from cache
-        for (SlotRenderCache.HotbarOverlayInfo overlayInfo : SlotRenderCache.getPendingHotbarOverlays()) {
-            // Get unified mask texture
-            var maskTexture = CustomTextureHandler.getMaskTexture();
-            
-            // Try to render custom texture mask, fallback to black fill if texture doesn't exist
-            try {
-                // Use blit method to render custom mask texture, ensure it displays above items
-                guiGraphics.blit(maskTexture, overlayInfo.x, overlayInfo.y, 0, 0, 16, 16, 16, 16);
-            } catch (Exception e) {
-                // If texture loading fails, fallback to black fill
-                guiGraphics.fill(overlayInfo.x, overlayInfo.y, overlayInfo.x + 16, overlayInfo.y + 16, 999, 0xFF000000); // Pure black completely opaque, Z value set to 400 to ensure top layer
-            }
-            
-            // Render rotation animation texture
-            try {
-                var rotationTexture = CustomTextureHandler.getRotationAnimationTexture();
-                long currentTime = System.currentTimeMillis();
-                
-                // Calculate rotation texture position
-                float[] position = RotationAnimationHandler.getRotatingPosition(
-                    overlayInfo.searchTime * 1000L, // Use remaining search time as base for start time
-                    currentTime
-                );
-                
-                // Render rotation animation texture, placed above mask (higher Z value)
-                guiGraphics.blit(rotationTexture, 
-                    (int)(overlayInfo.x + position[0]), 
-                    (int)(overlayInfo.y + position[1]), 
-                    0, 0, 16, 16, 16, 16); // 16x16 texture
-            } catch (Exception e) {
-                // If rotation texture loading fails, ignore
-            }
-        }
+    private void renderSearchMask(GuiGraphics guiGraphics, int x, int y) {
+        var maskTexture = CustomTextureHandler.getMaskTexture();
         
-        // Clear hotbar overlay cache
-        SlotRenderCache.clearHotbarCache();
+        try {
+            guiGraphics.blit(maskTexture, x, y, 400, 0, 0, 16, 16, 16, 16);
+        } catch (Exception e) {
+            guiGraphics.fill(x, y, x + 16, y + 16, 400, 0xFF000000);
+        }
+    }
+
+    private void renderRotationAnimation(GuiGraphics guiGraphics, int x, int y, double remainingTime) {
+        try {
+            var rotationTexture = CustomTextureHandler.getRotationAnimationTexture();
+            long currentTime = System.currentTimeMillis();
+            
+            float[] position = RotationAnimationHandler.getRotatingPosition(
+                (long)(remainingTime * 1000L),
+                currentTime
+            );
+            
+            guiGraphics.blit(rotationTexture, 
+                (int)(x + position[0]), 
+                (int)(y + position[1]), 
+                450, 0, 0, 16, 16, 16, 16);
+        } catch (Exception e) {
+        }
     }
 }
