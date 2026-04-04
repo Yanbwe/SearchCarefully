@@ -28,6 +28,9 @@ public class Config {
     // Hotbar search configuration
     public static ForgeConfigSpec.BooleanValue ENABLE_HOTBAR_SEARCH;
     
+    // Single slot search configuration
+    public static ForgeConfigSpec.BooleanValue ENABLE_SINGLE_SLOT_SEARCH;
+    
     static {
         BUILDER.push("Search System Configuration");
 
@@ -112,6 +115,13 @@ public class Config {
                 .comment("Enable search system for hotbar slots (items in hotbar will be searched automatically)",
                          "Default: false")
                 .define("enableHotbarSearch", false);
+        
+        // Single slot search configuration
+        ENABLE_SINGLE_SLOT_SEARCH = BUILDER
+                .comment("Enable single slot search mode (search items one by one in order)",
+                         "When enabled, items will be searched one by one starting from the first slot",
+                         "Default: false")
+                .define("enableSingleSlotSearch", false);
 
         BUILDER.pop();
         SPEC = BUILDER.build();
