@@ -38,4 +38,8 @@ public class SearchConstants {
     public static boolean isHotbarSearchEnabled() {
         return Config.ENABLE_HOTBAR_SEARCH.get();
     }
+    
+    public static boolean isSequentialSearchEnabled() {
+        return Config.ENABLE_SEQUENTIAL_SEARCH.get();
+    }
 }

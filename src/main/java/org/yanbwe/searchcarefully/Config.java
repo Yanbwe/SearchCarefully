@@ -28,6 +28,9 @@ public class Config {
     // Hotbar search configuration
     public static ModConfigSpec.BooleanValue ENABLE_HOTBAR_SEARCH;
     
+    // Sequential search configuration
+    public static ModConfigSpec.BooleanValue ENABLE_SEQUENTIAL_SEARCH;
+    
     static {
         BUILDER.push("Search System Configuration");
 
@@ -112,6 +115,12 @@ public class Config {
                 .comment("Enable search system for hotbar slots (items in hotbar will be searched automatically)",
                          "Default: false")
                 .define("enableHotbarSearch", false);
+        
+        // Sequential search configuration
+        ENABLE_SEQUENTIAL_SEARCH = BUILDER
+                .comment("Enable sequential search system (search items one by one in order, blocking until current slot is done)",
+                         "Default: false")
+                .define("enableSequentialSearch", false);
 
         BUILDER.pop();
         SPEC = BUILDER.build();
