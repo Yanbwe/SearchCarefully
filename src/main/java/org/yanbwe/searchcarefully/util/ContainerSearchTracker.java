@@ -17,6 +17,7 @@ public class ContainerSearchTracker {
     private static final Set<Integer> trackedHotbarSlots = new java.util.HashSet<>();
     private static boolean containerDirty = true;
     private static boolean hotbarDirty = true;
+    private static Integer currentSearchingSlotIndex = null;
 
     public static class TrackedSlotState {
         public final int slotIndex;
@@ -80,9 +81,69 @@ public class ContainerSearchTracker {
     public static List<TrackedSlotState> getTrackedContainerSlots(AbstractContainerScreen<?> screen) {
         if (containerDirty || lastScreen != screen) {
             scanAndMarkContainer(screen);
+            // Reset current searching slot when screen changes or container is dirty
+            currentSearchingSlotIndex = null;
         }
 
-        return new ArrayList<>(trackedContainerSlots.values());
+        // Check if single slot search is enabled
+        if (org.yanbwe.searchcarefully.Config.ENABLE_SINGLE_SLOT_SEARCH.get()) {
+            List<TrackedSlotState> result = new ArrayList<>();
+            
+            // Get all tracked slots sorted by slot index
+            List<TrackedSlotState> allTrackedSlots = new ArrayList<>(trackedContainerSlots.values());
+            allTrackedSlots.sort((a, b) -> Integer.compare(a.slotIndex, b.slotIndex));
+            
+            if (allTrackedSlots.isEmpty()) {
+                currentSearchingSlotIndex = null;
+                return result;
+            }
+            
+            // Find the next slot to search
+            if (currentSearchingSlotIndex == null) {
+                // Start from the first slot
+                currentSearchingSlotIndex = allTrackedSlots.get(0).slotIndex;
+            } else {
+                // Check if current slot is still being tracked
+                boolean currentSlotStillTracked = false;
+                for (TrackedSlotState state : allTrackedSlots) {
+                    if (state.slotIndex == currentSearchingSlotIndex) {
+                        currentSlotStillTracked = true;
+                        break;
+                    }
+                }
+                
+                if (!currentSlotStillTracked) {
+                    // Current slot is no longer tracked, find the next one
+                    for (TrackedSlotState state : allTrackedSlots) {
+                        if (state.slotIndex > currentSearchingSlotIndex) {
+                            currentSearchingSlotIndex = state.slotIndex;
+                            currentSlotStillTracked = true;
+                            break;
+                        }
+                    }
+                    
+                    // If no next slot found, start from the beginning
+                    if (!currentSlotStillTracked && !allTrackedSlots.isEmpty()) {
+                        currentSearchingSlotIndex = allTrackedSlots.get(0).slotIndex;
+                    }
+                }
+            }
+            
+            // Add only the current searching slot to the result
+            if (currentSearchingSlotIndex != null) {
+                for (TrackedSlotState state : allTrackedSlots) {
+                    if (state.slotIndex == currentSearchingSlotIndex) {
+                        result.add(state);
+                        break;
+                    }
+                }
+            }
+            
+            return result;
+        } else {
+            // Default behavior: return all tracked slots
+            return new ArrayList<>(trackedContainerSlots.values());
+        }
     }
 
     public static List<TrackedSlotState> getTrackedHotbarSlots(net.minecraft.world.entity.player.Inventory inventory) {
@@ -100,6 +161,7 @@ public class ContainerSearchTracker {
     public static void clearContainerTracking() {
         trackedContainerSlots.clear();
         containerDirty = true;
+        currentSearchingSlotIndex = null;
     }
 
     public static void clearHotbarTracking() {
