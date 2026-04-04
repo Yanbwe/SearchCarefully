@@ -38,6 +38,13 @@ public abstract class ContainerScreenRenderMixin {
                     guiGraphics.fill(x, y, x + 16, y + 16, 400, 0xFF000000);
                 }
                 
+                // 逐格搜索模式下，只渲染当前正在搜索物品的旋转动画
+                if (org.yanbwe.searchcarefully.Config.ENABLE_SINGLE_SLOT_SEARCH.get()) {
+                    if (!org.yanbwe.searchcarefully.client.ClientOverlayRenderer.isItemBeingSearched(itemStack)) {
+                        return;
+                    }
+                }
+                
                 // 渲染旋转动画纹理
                 try {
                     var rotationTexture = CustomTextureHandler.getRotationAnimationTexture();

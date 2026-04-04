@@ -103,27 +103,33 @@ public class ContainerSearchTracker {
                 // Start from the first slot
                 currentSearchingSlotIndex = allTrackedSlots.get(0).slotIndex;
             } else {
-                // Check if current slot is still being tracked
-                boolean currentSlotStillTracked = false;
+                // Check if current slot still has search time remaining
+                boolean currentSlotHasSearchTime = false;
                 for (TrackedSlotState state : allTrackedSlots) {
                     if (state.slotIndex == currentSearchingSlotIndex) {
-                        currentSlotStillTracked = true;
+                        // Find the actual slot and check its item
+                        if (screen.getMenu() != null && state.slotIndex < screen.getMenu().slots.size()) {
+                            Slot slot = screen.getMenu().slots.get(state.slotIndex);
+                            if (ItemStackHelper.hasRemainingSearchTime(slot.getItem())) {
+                                currentSlotHasSearchTime = true;
+                            }
+                        }
                         break;
                     }
                 }
                 
-                if (!currentSlotStillTracked) {
-                    // Current slot is no longer tracked, find the next one
+                if (!currentSlotHasSearchTime) {
+                    // Current slot no longer has search time, find the next one
                     for (TrackedSlotState state : allTrackedSlots) {
                         if (state.slotIndex > currentSearchingSlotIndex) {
                             currentSearchingSlotIndex = state.slotIndex;
-                            currentSlotStillTracked = true;
+                            currentSlotHasSearchTime = true;
                             break;
                         }
                     }
                     
                     // If no next slot found, start from the beginning
-                    if (!currentSlotStillTracked && !allTrackedSlots.isEmpty()) {
+                    if (!currentSlotHasSearchTime && !allTrackedSlots.isEmpty()) {
                         currentSearchingSlotIndex = allTrackedSlots.get(0).slotIndex;
                     }
                 }

@@ -55,10 +55,25 @@ public class ClientOverlayRenderer {
             // 使用mixin获取悬停的槽位
             Slot hoveredSlot = ((ContainerAccessMixin) screen).getHoveredSlot();
             
-            // 检查槽位是否正在搜索
-            if (hoveredSlot != null && isSlotBeingSearched(hoveredSlot)) {
-                // 如果槽位正在搜索中，取消工具提示的渲染
-                event.setCanceled(true);
+            if (hoveredSlot != null) {
+                // 检查槽位是否正在搜索
+                if (isSlotBeingSearched(hoveredSlot)) {
+                    event.setCanceled(true);
+                    return;
+                }
+                
+                // 逐格搜索模式下，检查所有待搜物品
+                if (org.yanbwe.searchcarefully.Config.ENABLE_SINGLE_SLOT_SEARCH.get()) {
+                    if (hoveredSlot.hasItem()) {
+                        ItemStack stack = hoveredSlot.getItem();
+                        if (ItemStackHelper.hasRemainingSearchTime(stack)) {
+                            int searchTime = (int) ItemStackHelper.getRemainingSearchTime(stack);
+                            if (searchTime > 0) {
+                                event.setCanceled(true);
+                            }
+                        }
+                    }
+                }
             }
         }
     }
@@ -83,14 +98,36 @@ public class ClientOverlayRenderer {
             if (screen.getMenu() != null) {
                 activeSearchSlots.clear();
                 
-                // 添加所有有剩余搜索时间物品的槽位
-                for (Slot slot : screen.getMenu().slots) {
-                    if (slot.hasItem()) {
-                        ItemStack stack = slot.getItem();
-                        if (ItemStackHelper.hasRemainingSearchTime(stack)) {
-                            int searchTime = (int) ItemStackHelper.getRemainingSearchTime(stack);
-                            if (searchTime > 0) {
-                                activeSearchSlots.add(slot);
+                boolean singleSlotSearch = org.yanbwe.searchcarefully.Config.ENABLE_SINGLE_SLOT_SEARCH.get();
+                
+                if (singleSlotSearch) {
+                    // 逐格搜索模式：只收集当前正在搜索的槽位
+                    var trackedSlots = org.yanbwe.searchcarefully.util.ContainerSearchTracker.getTrackedContainerSlots(screen);
+                    if (!trackedSlots.isEmpty()) {
+                        int currentSlotIndex = trackedSlots.get(0).slotIndex;
+                        if (currentSlotIndex < screen.getMenu().slots.size()) {
+                            Slot slot = screen.getMenu().slots.get(currentSlotIndex);
+                            if (slot.hasItem()) {
+                                ItemStack stack = slot.getItem();
+                                if (ItemStackHelper.hasRemainingSearchTime(stack)) {
+                                    int searchTime = (int) ItemStackHelper.getRemainingSearchTime(stack);
+                                    if (searchTime > 0) {
+                                        activeSearchSlots.add(slot);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    // 默认模式：添加所有有剩余搜索时间物品的槽位
+                    for (Slot slot : screen.getMenu().slots) {
+                        if (slot.hasItem()) {
+                            ItemStack stack = slot.getItem();
+                            if (ItemStackHelper.hasRemainingSearchTime(stack)) {
+                                int searchTime = (int) ItemStackHelper.getRemainingSearchTime(stack);
+                                if (searchTime > 0) {
+                                    activeSearchSlots.add(slot);
+                                }
                             }
                         }
                     }
@@ -158,6 +195,18 @@ public class ClientOverlayRenderer {
 
     public static boolean isSlotBeingSearched(Slot slot) {
         return activeSearchSlots.contains(slot);
+    }
+
+    public static boolean isItemBeingSearched(ItemStack itemStack) {
+        if (itemStack.isEmpty()) {
+            return false;
+        }
+        for (Slot slot : activeSearchSlots) {
+            if (slot.hasItem() && slot.getItem() == itemStack) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static AbstractContainerScreen<?> getCurrentScreen() {
