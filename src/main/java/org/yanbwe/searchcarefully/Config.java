@@ -31,6 +31,9 @@ public class Config {
     // Single slot search configuration
     public static ForgeConfigSpec.BooleanValue ENABLE_SINGLE_SLOT_SEARCH;
     
+    // Single slot search time multiplier
+    public static ForgeConfigSpec.BooleanValue SINGLE_SLOT_SEARCH_TIME_MULTIPLIER;
+    
     static {
         BUILDER.push("Search System Configuration");
 
@@ -122,6 +125,12 @@ public class Config {
                          "When enabled, items will be searched one by one starting from the first slot",
                          "Default: false")
                 .define("enableSingleSlotSearch", false);
+        
+        // Single slot search time multiplier
+        SINGLE_SLOT_SEARCH_TIME_MULTIPLIER = BUILDER
+                .comment("Apply 3x time multiplier when single slot search mode is enabled",
+                         "Default: true")
+                .define("singleSlotSearchTimeMultiplier", true);
 
         BUILDER.pop();
         SPEC = BUILDER.build();
