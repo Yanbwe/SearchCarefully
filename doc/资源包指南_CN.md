@@ -1,12 +1,12 @@
-# SearchCarefully Resource Pack Creation Guide
+# SearchCarefully资源包制作指南
 
-## Overview
+## 概述
 
-The SearchCarefully mod supports customizing search masks, rotation animations, and sound effects through resource packs. This document will guide you on how to create and configure these resources.
+SearchCarefully 模组支持通过资源包来自定义搜索遮罩、旋转动画和音效。本文档将指导您如何创建和配置这些资源。
 
-## Resource Pack Structure
+## 资源包结构
 
-The resource pack should adhere to the standard Minecraft resource pack structure:
+资源包应遵循标准的 Minecraft 资源包结构：
 
 ```
 resource_pack/
@@ -20,34 +20,34 @@ resource_pack/
 └── pack.mcmeta
 ```
 
-## Custom Textures
+## 自定义纹理
 
-### Search Mask Texture
+### 搜索遮罩纹理
 
-- **File Path**: `assets/searchcarefully/textures/gui/search_mask.png`
-- **Recommended size**: 16x16 pixels
-- **Purpose**: A mask that covers the item to be searched
-- **Recommendation**: Use opaque textures to fully obscure items
+- **文件路径**：`assets/searchcarefully/textures/gui/search_mask.png`
+- **推荐尺寸**：16x16 像素
+- **用途**：覆盖在待搜索物品上的遮罩
+- **建议**：使用不透明纹理以完全遮挡物品
 
-### Rotating Animated Texture
+### 旋转动画纹理
 
-- **File Path**: `assets/searchcarefully/textures/gui/rotation_animation.png`
-- **Recommended size**: 16x16 pixels
-- **Purpose**: Animated texture that rotates above the mask
-- **Recommendation**: Use textures with transparent backgrounds to reveal the content beneath
+- **文件路径**：`assets/searchcarefully/textures/gui/rotation_animation.png`
+- **推荐尺寸**：16x16 像素
+- **用途**：在遮罩上方旋转的动画纹理
+- **建议**：使用带有透明背景的纹理以显示下方内容
 
-## Custom Sound Effects
+## 自定义音效
 
-### Sound Effects Files
+### 音效文件
 
-- **File Path**: `assets/searchcarefully/sounds/`
-- **File format**: OGG format
-- **File Name**: `search_completion_rarity_1.ogg` to `search_completion_rarity_7.ogg`
-- **Audio Format**: **Must be mono (single-channel) format**, stereo format cannot apply 3D spatial positioning and distance attenuation effects
+- **文件路径**：`assets/searchcarefully/sounds/`
+- **文件格式**：OGG 格式
+- **文件名**：`search_completion_rarity_1.ogg` 到 `search_completion_rarity_7.ogg`
+- **音频格式**：**必须为单声道（Mono）格式**，立体声（Stereo）格式无法应用3D空间定位和距离衰减效果
 
-### Sound Effects Configuration
+### 音效配置
 
-Configure sound effects in `assets/searchcarefully/sounds.json`:
+在 `assets/searchcarefully/sounds.json` 中配置音效：
 
 ```json
 {
@@ -124,10 +124,10 @@ Configure sound effects in `assets/searchcarefully/sounds.json`:
 }
 ```
 
-## Sound Effect Attribute Description
+## 音效属性说明
 
-- **name**: The resource location of the sound effect, in the format of `namespace:sound_name`
-- **stream**: Whether to play in streaming mode. Set to false for short sound effects
-- **attenuation_distance**: The distance over which the sound attenuates, used for 3D spatial positioning effect, the value represents the effective range of the sound effect (in blocks)
-- **subtitle**: The localization key for subtitle text, used to display sound effect descriptions in game subtitles
-- **Important Note**: Audio files must be in mono (single-channel) format to enable 3D spatial positioning and distance attenuation effects
+- **name**：音效的资源位置，格式为 `namespace:sound_name`
+- **stream**：是否流式播放，对于短音效设置为 false
+- **attenuation_distance**：音效衰减距离，用于3D空间定位效果，数值表示音效有效范围（方块）
+- **subtitle**：字幕文本的本地化键，用于在游戏字幕中显示音效描述
+- **重要提示**：音频文件必须为单声道（Mono）格式才能实现3D空间定位和距离衰减效果
