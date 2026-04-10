@@ -58,7 +58,10 @@ public class ClientOverlayRenderer {
             if (hoveredSlot != null) {
                 // 检查槽位是否正在搜索
                 if (isSlotBeingSearched(hoveredSlot)) {
-                    event.setCanceled(true);
+                    // 只取消可取消的事件类型（如RenderTooltipEvent.Pre）
+                    if (event.isCancelable()) {
+                        event.setCanceled(true);
+                    }
                     return;
                 }
                 
@@ -69,7 +72,10 @@ public class ClientOverlayRenderer {
                         if (ItemStackHelper.hasRemainingSearchTime(stack)) {
                             int searchTime = (int) ItemStackHelper.getRemainingSearchTime(stack);
                             if (searchTime > 0) {
-                                event.setCanceled(true);
+                                // 只取消可取消的事件类型（如RenderTooltipEvent.Pre）
+                                if (event.isCancelable()) {
+                                    event.setCanceled(true);
+                                }
                             }
                         }
                     }
