@@ -70,8 +70,8 @@ public class ClientOverlayRenderer {
                     if (hoveredSlot.hasItem()) {
                         ItemStack stack = hoveredSlot.getItem();
                         if (ItemStackHelper.hasRemainingSearchTime(stack)) {
-                            int searchTime = (int) ItemStackHelper.getRemainingSearchTime(stack);
-                            if (searchTime > 0) {
+                            double searchTime = ItemStackHelper.getRemainingSearchTime(stack);
+                            if (searchTime > 0.0) {
                                 // 只取消可取消的事件类型（如RenderTooltipEvent.Pre）
                                 if (event.isCancelable()) {
                                     event.setCanceled(true);
@@ -116,8 +116,8 @@ public class ClientOverlayRenderer {
                             if (slot.hasItem()) {
                                 ItemStack stack = slot.getItem();
                                 if (ItemStackHelper.hasRemainingSearchTime(stack)) {
-                                    int searchTime = (int) ItemStackHelper.getRemainingSearchTime(stack);
-                                    if (searchTime > 0) {
+                                    double searchTime = ItemStackHelper.getRemainingSearchTime(stack);
+                                    if (searchTime > 0.0) {
                                         activeSearchSlots.add(slot);
                                     }
                                 }
@@ -130,8 +130,8 @@ public class ClientOverlayRenderer {
                         if (slot.hasItem()) {
                             ItemStack stack = slot.getItem();
                             if (ItemStackHelper.hasRemainingSearchTime(stack)) {
-                                int searchTime = (int) ItemStackHelper.getRemainingSearchTime(stack);
-                                if (searchTime > 0) {
+                                double searchTime = ItemStackHelper.getRemainingSearchTime(stack);
+                                if (searchTime > 0.0) {
                                     activeSearchSlots.add(slot);
                                 }
                             }

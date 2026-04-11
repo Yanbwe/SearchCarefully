@@ -34,6 +34,10 @@ public class Config {
     // Single slot search time multiplier
     public static ForgeConfigSpec.BooleanValue SINGLE_SLOT_SEARCH_TIME_MULTIPLIER;
     
+    // Mouse target search configuration
+    public static ForgeConfigSpec.BooleanValue ENABLE_MOUSE_TARGET_SEARCH;
+    public static ForgeConfigSpec.DoubleValue MOUSE_TARGET_SWITCH_DELAY;
+    
     static {
         BUILDER.push("Search System Configuration");
 
@@ -131,6 +135,24 @@ public class Config {
                 .comment("Apply 3x time multiplier when single slot search mode is enabled",
                          "Default: true")
                 .define("singleSlotSearchTimeMultiplier", true);
+
+        // Mouse target search configuration
+        BUILDER.push("Mouse Target Search");
+        
+        ENABLE_MOUSE_TARGET_SEARCH = BUILDER
+                .comment("Enable mouse-targeted search mode",
+                         "When enabled, mouse cursor will target specific items for search",
+                         "If mouse is not pointing at any item, automatic search continues",
+                         "Default: true")
+                .define("enableMouseTargetSearch", true);
+        
+        MOUSE_TARGET_SWITCH_DELAY = BUILDER
+                .comment("Delay before switching to mouse target (in ticks)",
+                         "Higher values prevent rapid switching when moving mouse quickly",
+                         "Default: 3.0 ticks")
+                .defineInRange("mouseTargetSwitchDelay", 3.0, 0.0, 20.0);
+        
+        BUILDER.pop();
 
         BUILDER.pop();
         SPEC = BUILDER.build();

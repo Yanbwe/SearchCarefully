@@ -34,9 +34,10 @@ public class GuiHotbarRenderMixin {
                 ItemStack itemStack = inventory.getItem(i);
                             
                 if (!itemStack.isEmpty() && ItemStackHelper.hasRemainingSearchTime(itemStack)) {
-                    int searchTime = (int) ItemStackHelper.getRemainingSearchTime(itemStack);
+                    double searchTimeDouble = ItemStackHelper.getRemainingSearchTime(itemStack);
                     
-                    if (searchTime > 0) {
+                    if (searchTimeDouble > 0.0) {
+                        int searchTime = (int) Math.ceil(searchTimeDouble); // 向上取整，确保小数部分不被忽略
                         // 计算热键栏中对应槽位的位置
                         int screenWidth = mc.getWindow().getGuiScaledWidth();
                         int screenHeight = mc.getWindow().getGuiScaledHeight();

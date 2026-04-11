@@ -112,4 +112,5 @@ public abstract class ContainerScreenRenderMixin {
     private void renderFakeItemWithSearchMask(ItemStack itemStack, int x, int y, CallbackInfo ci) {
         renderSearchMask(itemStack, x, y);
     }
+    
 }

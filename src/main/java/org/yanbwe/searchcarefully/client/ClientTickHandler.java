@@ -33,6 +33,9 @@ public class ClientTickHandler {
         Minecraft mc = Minecraft.getInstance();
 
         if (mc.screen instanceof AbstractContainerScreen screen) {
+            // 更新混合搜索管理器
+            org.yanbwe.searchcarefully.manager.HybridSearchManager.updateSearchTarget();
+            
             ContainerSearchTracker.onScreenChanged(screen);
 
             for (var state : ContainerSearchTracker.getTrackedContainerSlots(screen)) {
@@ -45,6 +48,9 @@ public class ClientTickHandler {
                 }
             }
         } else {
+            // 不在容器界面，重置混合搜索管理器
+            org.yanbwe.searchcarefully.manager.HybridSearchManager.reset();
+            
             ContainerSearchTracker.onScreenChanged(null);
             ContainerSearchTracker.clearContainerTracking();
 
