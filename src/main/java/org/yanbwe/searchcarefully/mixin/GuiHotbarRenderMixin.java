@@ -1,15 +1,17 @@
 package org.yanbwe.searchcarefully.mixin;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-// GuiHotbarRenderMixin中不再需要直接调用RarityRegistry
 import org.yanbwe.searchcarefully.animation.RotationAnimationHandler;
 import org.yanbwe.searchcarefully.textures.CustomTextureHandler;
 import org.yanbwe.searchcarefully.util.ItemStackHelper;
@@ -17,6 +19,34 @@ import org.yanbwe.searchcarefully.util.SlotRenderCache;
 
 @Mixin(Gui.class)
 public class GuiHotbarRenderMixin {
+
+    /**
+     * 使用 guiOverlay 渲染类型渲染纯色遮罩
+     * guiOverlay 不进行深度测试且不写入深度缓冲区，确保不会遮挡提示框
+     */
+    private void fillWithOverlay(GuiGraphics guiGraphics, int x, int y, int width, int height, int color) {
+        guiGraphics.fill(RenderType.guiOverlay(), x, y, x + width, y + height, color);
+    }
+
+    /**
+     * 使用 GuiGraphics.blit() 渲染纹理，禁用深度测试
+     * 确保不会遮挡提示框
+     */
+    private void blitWithOverlay(GuiGraphics guiGraphics, ResourceLocation texture, int x, int y, int width, int height) {
+        RenderSystem.disableDepthTest();
+        guiGraphics.blit(texture, x, y, 0, 0, width, height, width, height);
+        RenderSystem.enableDepthTest();
+    }
+
+    /**
+     * 使用 GuiGraphics.blit() 渲染带透明度的纹理，禁用深度测试
+     */
+    private void blitWithOverlayAlpha(GuiGraphics guiGraphics, ResourceLocation texture, int x, int y, int width, int height) {
+        RenderSystem.disableDepthTest();
+        RenderSystem.enableBlend();
+        guiGraphics.blit(texture, x, y, 0, 0, width, height, width, height);
+        RenderSystem.enableDepthTest();
+    }
 
     // 在热键栏渲染前收集需要渲染搜索遮罩的数据
     @Inject(
@@ -62,36 +92,33 @@ public class GuiHotbarRenderMixin {
     private void renderHotbarSearchOverlays(float partialTick, GuiGraphics guiGraphics, CallbackInfo ci) {
         // 渲染缓存中所有的热键栏遮罩
         for (SlotRenderCache.HotbarOverlayInfo overlayInfo : SlotRenderCache.getPendingHotbarOverlays()) {
-            // 获取统一的遮罩纹理
-            var maskTexture = CustomTextureHandler.getMaskTexture();
-            
-            // 尝试使用自定义纹理渲染遮罩，如果纹理不存在则回退到纯黑色
+            // 使用自定义渲染类型渲染纹理遮罩
+            // guiOverlay 不进行深度测试且不写入深度缓冲区，确保不会遮挡提示框
             try {
-                // 使用blit方法渲染自定义遮罩纹理，确保在物品上方显示
-                guiGraphics.blit(maskTexture, overlayInfo.x, overlayInfo.y, 0, 0, 16, 16, 16, 16);
+                var maskTexture = CustomTextureHandler.getMaskTexture();
+                blitWithOverlay(guiGraphics, maskTexture, overlayInfo.x, overlayInfo.y, 16, 16);
             } catch (Exception e) {
                 // 如果纹理加载失败，回退到纯黑色填充
-                guiGraphics.fill(overlayInfo.x, overlayInfo.y, overlayInfo.x + 16, overlayInfo.y + 16, 400, 0xFF000000); // 纯黑色完全不透明，Z值设为400确保在顶层
+                fillWithOverlay(guiGraphics, overlayInfo.x, overlayInfo.y, 16, 16, 0xFF000000);
             }
             
-            // 渲染旋转动画纹理
+            // 渲染旋转动画
             try {
                 var rotationTexture = CustomTextureHandler.getRotationAnimationTexture();
                 long currentTime = System.currentTimeMillis();
                 
-                // 计算旋转纹理的位置
+                // 计算旋转动画的位置
                 float[] position = RotationAnimationHandler.getRotatingPosition(
                     overlayInfo.searchTime * 1000L, // 使用剩余搜索时间作为起始时间的基础
                     currentTime
                 );
                 
-                // 渲染旋转动画纹理，放在遮罩上方（更高Z值）
-                guiGraphics.blit(rotationTexture, 
-                    (int)(overlayInfo.x + position[0]), 
-                    (int)(overlayInfo.y + position[1]), 
-                    0, 0, 16, 16, 16, 16); // 16x16的纹理
+                // 旋转动画也使用自定义渲染类型
+                int animX = (int)(overlayInfo.x + position[0]);
+                int animY = (int)(overlayInfo.y + position[1]);
+                blitWithOverlayAlpha(guiGraphics, rotationTexture, animX, animY, 16, 16);
             } catch (Exception e) {
-                // 如果旋转纹理加载失败，忽略
+                // 如果旋转动画计算失败，忽略
             }
         }
         

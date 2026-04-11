@@ -1,27 +1,60 @@
 package org.yanbwe.searchcarefully.mixin;
 
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-// ContainerScreenRenderMixin中不再需要直接调用RarityRegistry
 import org.yanbwe.searchcarefully.animation.RotationAnimationHandler;
 import org.yanbwe.searchcarefully.textures.CustomTextureHandler;
 import org.yanbwe.searchcarefully.util.SearchConstants;
-import org.yanbwe.searchcarefully.util.SlotRenderCache;
 
 @Mixin(GuiGraphics.class)
 public abstract class ContainerScreenRenderMixin {
 
-    @Shadow public abstract void fill(int pMinX, int pMinY, int pMaxX, int pMaxY, int pBlitOffset, int pColor);
+    @Shadow
+    public PoseStack pose;
+
+    /**
+     * 使用 guiOverlay 渲染类型渲染纯色遮罩
+     * guiOverlay 不进行深度测试且不写入深度缓冲区，确保不会遮挡提示框
+     */
+    private void fillWithOverlay(int x, int y, int width, int height, int color) {
+        GuiGraphics guiGraphics = (GuiGraphics)(Object)this;
+        guiGraphics.fill(RenderType.guiOverlay(), x, y, x + width, y + height, color);
+    }
+
+    /**
+     * 使用 GuiGraphics.blit() 渲染纹理，禁用深度测试
+     * 确保不会遮挡提示框
+     */
+    private void blitWithOverlay(GuiGraphics guiGraphics, ResourceLocation texture, int x, int y, int width, int height) {
+        RenderSystem.disableDepthTest();
+        guiGraphics.blit(texture, x, y, 0, 0, width, height, width, height);
+        RenderSystem.enableDepthTest();
+    }
+
+    /**
+     * 使用 GuiGraphics.blit() 渲染带透明度的纹理，禁用深度测试
+     */
+    private void blitWithOverlayAlpha(GuiGraphics guiGraphics, ResourceLocation texture, int x, int y, int width, int height, int alpha) {
+        RenderSystem.disableDepthTest();
+        RenderSystem.enableBlend();
+        guiGraphics.blit(texture, x, y, 0, 0, width, height, width, height);
+        RenderSystem.enableDepthTest();
+    }
 
     /**
      * 统一的搜索遮罩渲染方法
      * 处理GUI中物品的搜索遮罩和旋转动画渲染
+     * 使用 guiOverlay 渲染类型，确保不会遮挡提示框
      */
     private void renderSearchMask(ItemStack itemStack, int x, int y) {
         if (!itemStack.isEmpty() && itemStack.hasTag() && itemStack.getTag().contains(SearchConstants.SEARCH_TIME_REMAINING)) {
@@ -29,13 +62,14 @@ public abstract class ContainerScreenRenderMixin {
             if (remainingTime > 0) {
                 GuiGraphics guiGraphics = (GuiGraphics)(Object)this;
                 
-                // 渲染遮罩 - 使用自定义纹理遮罩
-                var maskTexture = CustomTextureHandler.getMaskTexture();
+                // 使用自定义渲染类型渲染纹理遮罩
+                // guiOverlay 不进行深度测试且不写入深度缓冲区，确保不会遮挡提示框
                 try {
-                    guiGraphics.blit(maskTexture, x, y, 400, 0, 0, 16, 16, 16, 16);
+                    var maskTexture = CustomTextureHandler.getMaskTexture();
+                    blitWithOverlay(guiGraphics, maskTexture, x, y, 16, 16);
                 } catch (Exception e) {
                     // 如果纹理加载失败，回退到纯黑色填充
-                    guiGraphics.fill(x, y, x + 16, y + 16, 400, 0xFF000000);
+                    fillWithOverlay(x, y, 16, 16, 0xFF000000);
                 }
                 
                 // 逐格搜索模式下，只渲染当前正在搜索物品的旋转动画
@@ -55,10 +89,10 @@ public abstract class ContainerScreenRenderMixin {
                         currentTime
                     );
                     
-                    guiGraphics.blit(rotationTexture, 
-                        (int)(x + position[0]), 
-                        (int)(y + position[1]), 
-                        450, 0, 0, 16, 16, 16, 16);
+                    // 旋转动画也使用自定义渲染类型
+                    int animX = (int)(x + position[0]);
+                    int animY = (int)(y + position[1]);
+                    blitWithOverlayAlpha(guiGraphics, rotationTexture, animX, animY, 16, 16, 0x80);
                 } catch (Exception e) {
                     // 如果旋转纹理加载失败，忽略
                 }
