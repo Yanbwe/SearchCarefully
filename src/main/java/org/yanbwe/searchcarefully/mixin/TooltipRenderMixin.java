@@ -23,7 +23,7 @@ import java.util.List;
  * 底层工具提示渲染拦截Mixin
  * 直接拦截Minecraft原生的工具提示渲染方法，确保与Obscure Tooltips等模组的兼容性
  */
-@Mixin(GuiGraphics.class)
+@Mixin(value = GuiGraphics.class, priority = 500)
 public abstract class TooltipRenderMixin {
     
     // 槽位缓存优化

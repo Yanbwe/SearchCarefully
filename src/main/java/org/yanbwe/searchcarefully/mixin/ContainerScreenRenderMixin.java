@@ -16,7 +16,7 @@ import org.yanbwe.searchcarefully.animation.RotationAnimationHandler;
 import org.yanbwe.searchcarefully.textures.CustomTextureHandler;
 import org.yanbwe.searchcarefully.util.SearchConstants;
 
-@Mixin(GuiGraphics.class)
+@Mixin(value = GuiGraphics.class, priority = 500)
 public abstract class ContainerScreenRenderMixin {
 
     @Shadow

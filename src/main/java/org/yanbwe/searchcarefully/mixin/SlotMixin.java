@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.yanbwe.searchcarefully.util.ItemStackHelper;
 import org.yanbwe.searchcarefully.util.SearchConstants;
 
-@Mixin(Slot.class)
+@Mixin(value = Slot.class, priority = 500)
 public class SlotMixin {
 
     @Shadow

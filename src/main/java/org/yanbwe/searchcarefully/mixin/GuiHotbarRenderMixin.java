@@ -17,7 +17,7 @@ import org.yanbwe.searchcarefully.textures.CustomTextureHandler;
 import org.yanbwe.searchcarefully.util.ItemStackHelper;
 import org.yanbwe.searchcarefully.util.SlotRenderCache;
 
-@Mixin(Gui.class)
+@Mixin(value = Gui.class, priority = 500)
 public class GuiHotbarRenderMixin {
 
     /**

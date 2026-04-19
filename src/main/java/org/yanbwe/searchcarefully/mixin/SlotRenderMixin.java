@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.yanbwe.searchcarefully.util.ItemStackHelper;
 import org.yanbwe.searchcarefully.util.SlotRenderCache;
 
-@Mixin(AbstractContainerScreen.class)
+@Mixin(value = AbstractContainerScreen.class, priority = 500)
 public class SlotRenderMixin {
 
     // 在渲染物品槽时收集需要渲染搜索遮罩的槽位信息
