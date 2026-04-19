@@ -1,13 +1,16 @@
 package org.yanbwe.searchcarefully.manager;
 
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.sounds.SoundSource;
 import org.yanbwe.searchcarefully.Searchcarefully;
 import org.yanbwe.searchcarefully.util.SearchConstants;
 import org.yanbwe.searchcarefully.item.SearchPlaceholderItem;
 import org.yanbwe.searchcarefully.sounds.SoundHandler;
+import org.yanbwe.searchcarefully.sounds.SearchCompletionSound;
 import org.yanbwe.searchcarefully.util.ItemStackHelper;
 import org.yanbwe.raritycore.registry.RarityRegistry;
 
@@ -15,6 +18,9 @@ public class SearchManager {
 
     private static final double BASE_DECREMENT = 1.0;
     private static final double MIN_DECREMENT = 0.1;
+    
+    // 全局追踪上次搜索进度音效播放的时间（tick）
+    private static long lastSearchProgressSoundTick = 0;
 
     public static double getPlayerSearchSpeed(Player player) {
         AttributeInstance attr = player.getAttribute(Searchcarefully.SEARCH_SPEED.get());
@@ -76,6 +82,11 @@ public class SearchManager {
         double remainingTime = ItemStackHelper.decrementSearchTime(stack, actualDecrement);
 
         onUpdate.run();
+        
+        // 播放搜索进度音效（全局统一控制，避免同时搜索多个物品时音效叠加）
+        if (remainingTime > 0.0) {
+            playSearchProgressSoundIfNeeded(player);
+        }
 
         if (remainingTime <= 0.0) {
             playCompletionEffect(player, stack.getItem());
@@ -97,6 +108,11 @@ public class SearchManager {
         double currentTime = placeholderStack.getTag().getDouble("SearchTimeRemaining");
         double newTime = Math.max(0.0, currentTime - actualDecrement);
         placeholderStack.getTag().putDouble("SearchTimeRemaining", newTime);
+        
+        // 播放搜索进度音效（全局统一控制）
+        if (newTime > 0.0) {
+            playSearchProgressSoundIfNeeded(player);
+        }
 
         if (newTime <= 0.0) {
             ItemStack originalItem = SearchPlaceholderItem.getOriginalItem(placeholderStack);
@@ -126,6 +142,11 @@ public class SearchManager {
         placeholderStack.getTag().putDouble("SearchTimeRemaining", newTime);
 
         slot.set(placeholderStack);
+        
+        // 播放搜索进度音效（全局统一控制）
+        if (newTime > 0.0) {
+            playSearchProgressSoundIfNeeded(player);
+        }
 
         if (newTime <= 0.0) {
             ItemStack originalItem = SearchPlaceholderItem.getOriginalItem(placeholderStack);
@@ -150,7 +171,39 @@ public class SearchManager {
         
         return Math.max(MIN_DECREMENT, actualDecrement);
     }
-
+    
+    /**
+     * 播放搜索进度音效（全局统一控制，避免同时搜索多个物品时音效叠加）
+     * 使用统一的搜索进度音效，不区分稀有度
+     * 
+     * @param player 玩家（用于获取位置）
+     */
+    private static void playSearchProgressSoundIfNeeded(Player player) {
+        if (!SearchConstants.isSearchProgressSoundEnabled()) {
+            return;
+        }
+        
+        // 获取当前tick
+        long currentTick = player.level().getGameTime();
+        long intervalTicks = (long) (SearchConstants.getSearchProgressSoundInterval() * 20); // 转换为tick
+        
+        // 检查是否满足播放间隔
+        if (currentTick - lastSearchProgressSoundTick >= intervalTicks) {
+            // 在世界中播放统一的搜索进度音效
+            if (player.level() instanceof ServerLevel serverLevel) {
+                serverLevel.playSound(
+                    null, 
+                    player.getX(), player.getY(), player.getZ(), 
+                    SearchCompletionSound.SEARCH_PROGRESS_SOUND_EVENT, 
+                    SoundSource.BLOCKS, 
+                    0.5F, 
+                    1.0F
+                );
+                lastSearchProgressSoundTick = currentTick;
+            }
+        }
+    }
+    
     private static void playCompletionEffect(Player player, net.minecraft.world.item.Item item) {
         int rarity = RarityRegistry.getNormalizedRarity(item);
         SoundHandler.playSearchCompletionSound(player.level(), player.getX(), player.getY(), player.getZ(), rarity);

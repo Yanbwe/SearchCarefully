@@ -38,4 +38,12 @@ public class SearchConstants {
     public static boolean isHotbarSearchEnabled() {
         return Config.ENABLE_HOTBAR_SEARCH.get();
     }
+    
+    public static boolean isSearchProgressSoundEnabled() {
+        return Config.ENABLE_SEARCH_PROGRESS_SOUND.get();
+    }
+    
+    public static double getSearchProgressSoundInterval() {
+        return Config.SEARCH_PROGRESS_SOUND_INTERVAL.get();
+    }
 }

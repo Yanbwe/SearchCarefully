@@ -38,6 +38,10 @@ public class Config {
     public static ForgeConfigSpec.BooleanValue ENABLE_MOUSE_TARGET_SEARCH;
     public static ForgeConfigSpec.DoubleValue MOUSE_TARGET_SWITCH_DELAY;
     
+    // Search progress sound configuration
+    public static ForgeConfigSpec.BooleanValue ENABLE_SEARCH_PROGRESS_SOUND;
+    public static ForgeConfigSpec.DoubleValue SEARCH_PROGRESS_SOUND_INTERVAL;
+    
     static {
         BUILDER.push("Search System Configuration");
 
@@ -152,8 +156,22 @@ public class Config {
                          "Default: 3.0 ticks")
                 .defineInRange("mouseTargetSwitchDelay", 3.0, 0.0, 20.0);
         
+        // Search progress sound configuration
+        BUILDER.push("Search Progress Sound");
+        
+        ENABLE_SEARCH_PROGRESS_SOUND = BUILDER
+                .comment("Enable playing sound during search progress",
+                         "When enabled, a sound will play at intervals while searching",
+                         "Default: true")
+                .define("enableSearchProgressSound", true);
+        
+        SEARCH_PROGRESS_SOUND_INTERVAL = BUILDER
+                .comment("Interval between search progress sounds (in seconds)",
+                         "Default: 0.5 seconds")
+                .defineInRange("searchProgressSoundInterval", 0.5, 0.1, 10.0);
+        
         BUILDER.pop();
-
+        
         BUILDER.pop();
         SPEC = BUILDER.build();
     }

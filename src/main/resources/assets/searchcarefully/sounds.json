@@ -1,4 +1,14 @@
 {
+  "search_progress": {
+    "sounds": [
+      {
+        "name": "searchcarefully:search_progress",
+        "stream": false,
+        "attenuation_distance": 16
+      }
+    ],
+    "subtitle": "sound.searchcarefully.search_progress"
+  },
   "search_completion_rarity_1": {
     "sounds": [
       {
