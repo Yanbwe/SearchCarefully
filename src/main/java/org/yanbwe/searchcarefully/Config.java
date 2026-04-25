@@ -118,7 +118,7 @@ public class Config {
                          "Example: ['chest', 'chests', 'treasure']",
                          "Used to match paths like 'structures/village/chest' or 'modid/special/chests'")
                 .defineListAllowEmpty(List.of("chestPathSegments"),
-                                    () -> List.of("chest", "chests", "block"),
+                                    () -> List.of("chest", "chests"),
                                     obj -> obj instanceof String s && !s.isEmpty());
         
         // Hotbar search configuration
