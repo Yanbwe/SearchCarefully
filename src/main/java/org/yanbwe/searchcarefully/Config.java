@@ -158,6 +158,8 @@ public class Config {
                          "Default: 3.0 ticks")
                 .defineInRange("mouseTargetSwitchDelay", 3.0, 0.0, 20.0);
         
+        BUILDER.pop();
+        
         // Search progress sound configuration
         BUILDER.push("Search Progress Sound");
         
