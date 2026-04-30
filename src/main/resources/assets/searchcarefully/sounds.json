@@ -3,7 +3,7 @@
     "sounds": [
       {
         "name": "searchcarefully:search_progress",
-        "stream": false,
+        "stream": true,
         "attenuation_distance": 16
       }
     ],

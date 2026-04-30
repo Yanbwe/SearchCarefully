@@ -23,5 +23,12 @@ public class NetworkHandler {
                 SearchProgressPacket::new,
                 SearchProgressPacket::handle
         );
+        INSTANCE.registerMessage(
+                packetId++,
+                StartLoopSoundPacket.class,
+                StartLoopSoundPacket::toBytes,
+                StartLoopSoundPacket::new,
+                StartLoopSoundPacket::handle
+        );
     }
 }

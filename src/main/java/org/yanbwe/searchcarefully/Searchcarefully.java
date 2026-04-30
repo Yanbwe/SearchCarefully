@@ -9,6 +9,7 @@ import net.minecraft.world.item.Items;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegisterCommandsEvent;
+import net.minecraftforge.event.entity.player.PlayerContainerEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -32,6 +33,7 @@ import org.yanbwe.searchcarefully.commands.ClearSearchTagsCommand;
 import org.yanbwe.searchcarefully.commands.ApplySearchCommand;
 import org.yanbwe.searchcarefully.loot.AddSearchTimeLootModifier;
 import org.yanbwe.searchcarefully.network.NetworkHandler;
+import org.yanbwe.searchcarefully.manager.SearchSoundSessionManager;
 import org.yanbwe.searchcarefully.sounds.SearchCompletionSound;
 import org.yanbwe.searchcarefully.util.ItemStackHelper;
 import org.yanbwe.searchcarefully.util.SearchConstants;
@@ -225,6 +227,14 @@ public class Searchcarefully {
         LOGGER.info("Registered SearchCarefully commands");
     }
     
+    // 玩家关闭容器时停止循环音效
+    @SubscribeEvent
+    public void onPlayerContainerClose(PlayerContainerEvent.Close event) {
+        Player player = event.getEntity();
+        if (!player.level().isClientSide()) {
+            SearchSoundSessionManager.forceStopSound(player);
+        }
+    }
 
     
     /**
