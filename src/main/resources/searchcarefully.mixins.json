@@ -12,6 +12,7 @@
     "SlotRenderMixin",
     "ContainerScreenRenderMixin",
     "GuiHotbarRenderMixin",
+    "GuiTopLayerMixin",
     "TooltipRenderMixin"
   ],
   "injectors": {

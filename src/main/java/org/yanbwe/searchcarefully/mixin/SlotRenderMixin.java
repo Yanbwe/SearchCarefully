@@ -29,6 +29,11 @@ public class SlotRenderMixin {
         at = @At("TAIL")
     )
     private void renderSearchOverlay(GuiGraphics guiGraphics, Slot slot, CallbackInfo ci) {
+        // 当最高层级渲染模式启用时，跳过此处的遮罩渲染，改由 ScreenEvent.Render.Post 处理
+        if (org.yanbwe.searchcarefully.Config.MASK_RENDER_ON_TOP.get()) {
+            return;
+        }
+        
         ItemStack itemStack = slot.getItem();
         if (!itemStack.isEmpty() && ItemStackHelper.hasRemainingSearchTime(itemStack)) {
             double searchTime = ItemStackHelper.getRemainingSearchTime(itemStack);

@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
@@ -16,7 +17,9 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.yanbwe.searchcarefully.Searchcarefully;
+import org.yanbwe.searchcarefully.animation.RotationAnimationHandler;
 import org.yanbwe.searchcarefully.mixin.ContainerAccessMixin;
+import org.yanbwe.searchcarefully.textures.CustomTextureHandler;
 import org.yanbwe.searchcarefully.util.ItemStackHelper;
 import org.yanbwe.searchcarefully.util.SearchConstants;
 
@@ -41,7 +44,78 @@ public class ClientOverlayRenderer {
 
     @SubscribeEvent
     public static void onScreenRenderPost(ScreenEvent.Render.Post event) {
-        // 遮罩渲染通过mixin处理，避免与RarityCore的边框渲染产生冲突
+        // 最高层级遮罩渲染模式：在所有元素（包括提示框）之上渲染遮罩
+        if (org.yanbwe.searchcarefully.Config.MASK_RENDER_ON_TOP.get()) {
+            if (event.getScreen() instanceof AbstractContainerScreen<?> screen) {
+                renderTopLayerMasks(event.getGuiGraphics(), screen);
+            }
+        }
+    }
+    
+    /**
+     * 在最高层级渲染所有搜索遮罩
+     * 此方法在 ScreenEvent.Render.Post 中调用，确保遮罩在所有元素之上
+     */
+    private static void renderTopLayerMasks(GuiGraphics guiGraphics, AbstractContainerScreen<?> screen) {
+        if (screen.getMenu() == null) return;
+        
+        int guiLeft = ((ContainerAccessMixin) screen).getLeftPos();
+        int guiTop = ((ContainerAccessMixin) screen).getTopPos();
+        
+        for (Slot slot : screen.getMenu().slots) {
+            ItemStack itemStack = slot.getItem();
+            if (itemStack.isEmpty() || !ItemStackHelper.hasRemainingSearchTime(itemStack)) {
+                continue;
+            }
+            
+            double searchTime = ItemStackHelper.getRemainingSearchTime(itemStack);
+            if (searchTime <= 0.0) {
+                continue;
+            }
+            
+            // 在 Post 事件中坐标系为屏幕坐标，需要加上 GUI 偏移
+            int x = guiLeft + slot.x;
+            int y = guiTop + slot.y;
+            
+            // 渲染遮罩纹理（最高层级，无深度测试限制）
+            try {
+                ResourceLocation maskTexture = CustomTextureHandler.getMaskTexture();
+                RenderSystem.disableDepthTest();
+                RenderSystem.depthMask(false);
+                guiGraphics.blit(maskTexture, x, y, 0, 0, 16, 16, 16, 16);
+                RenderSystem.depthMask(true);
+                RenderSystem.enableDepthTest();
+            } catch (Exception e) {
+                // 如果纹理加载失败，忽略
+            }
+            
+            // 逐格搜索模式下，只渲染当前正在搜索物品的旋转动画
+            if (org.yanbwe.searchcarefully.Config.ENABLE_SINGLE_SLOT_SEARCH.get()) {
+                if (!ClientOverlayRenderer.isItemBeingSearched(itemStack)) {
+                    continue;
+                }
+            }
+            
+            // 渲染旋转动画纹理
+            try {
+                ResourceLocation rotationTexture = CustomTextureHandler.getRotationAnimationTexture();
+                long currentTime = System.currentTimeMillis();
+                float[] position = RotationAnimationHandler.getRotatingPosition(
+                        (int) (searchTime * 1000L),
+                        currentTime
+                );
+                int animX = (int) (x + position[0]);
+                int animY = (int) (y + position[1]);
+                RenderSystem.disableDepthTest();
+                RenderSystem.depthMask(false);
+                RenderSystem.enableBlend();
+                guiGraphics.blit(rotationTexture, animX, animY, 0, 0, 16, 16, 16, 16);
+                RenderSystem.depthMask(true);
+                RenderSystem.enableDepthTest();
+            } catch (Exception e) {
+                // 如果旋转纹理加载失败，忽略
+            }
+        }
     }
 
     // 添加工具提示事件处理，用于隐藏正在搜索的物品的工具提示

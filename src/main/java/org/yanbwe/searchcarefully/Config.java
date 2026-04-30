@@ -41,6 +41,9 @@ public class Config {
     // Search progress sound configuration
     public static ForgeConfigSpec.BooleanValue ENABLE_SEARCH_PROGRESS_SOUND;
     
+    // Mask rendering layer configuration
+    public static ForgeConfigSpec.BooleanValue MASK_RENDER_ON_TOP;
+    
     static {
         BUILDER.push("Search System Configuration");
 
@@ -163,6 +166,18 @@ public class Config {
                          "When enabled, a looping search progress sound will play while items are being searched",
                          "Default: true")
                 .define("enableSearchProgressSound", true);
+        
+        BUILDER.pop();
+        
+        // Mask rendering layer configuration
+        BUILDER.push("Mask Rendering");
+        
+        MASK_RENDER_ON_TOP = BUILDER
+                .comment("Render search mask at the highest rendering layer",
+                         "When enabled, the search mask will render on top of ALL screen elements including tooltips",
+                         "This improves compatibility with mods that render custom elements between items and tooltips",
+                         "Default: false")
+                .define("maskRenderOnTop", false);
         
         BUILDER.pop();
         

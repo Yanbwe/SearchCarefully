@@ -54,6 +54,11 @@ public class GuiHotbarRenderMixin {
         at = @At("HEAD")
     )
     private void collectHotbarSearchOverlayData(float partialTick, GuiGraphics guiGraphics, CallbackInfo ci) {
+        // 当最高层级渲染模式启用时，跳过此处的遮罩渲染，改由 Gui.render() TAIL 处理
+        if (org.yanbwe.searchcarefully.Config.MASK_RENDER_ON_TOP.get()) {
+            return;
+        }
+        
         Minecraft mc = Minecraft.getInstance();
         
         if (mc.player != null) {
