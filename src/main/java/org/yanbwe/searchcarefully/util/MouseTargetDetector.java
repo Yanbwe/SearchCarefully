@@ -4,12 +4,15 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.yanbwe.searchcarefully.mixin.ContainerAccessMixin;
 
 /**
  * 鼠标目标检测器
  * 负责检测鼠标悬停的槽位并判断是否可搜索
  */
+@OnlyIn(Dist.CLIENT)
 public class MouseTargetDetector {
     
     private static Integer lastHoveredSlotIndex = null;

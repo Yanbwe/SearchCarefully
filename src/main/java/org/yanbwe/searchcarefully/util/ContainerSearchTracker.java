@@ -3,6 +3,8 @@ package org.yanbwe.searchcarefully.util;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.ArrayList;
 import java.util.IdentityHashMap;
@@ -10,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+@OnlyIn(Dist.CLIENT)
 public class ContainerSearchTracker {
 
     private static AbstractContainerScreen<?> lastScreen = null;

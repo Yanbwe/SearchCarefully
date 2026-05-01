@@ -3,6 +3,8 @@ package org.yanbwe.searchcarefully.manager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.world.inventory.Slot;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.yanbwe.searchcarefully.util.MouseTargetDetector;
 import org.yanbwe.searchcarefully.util.ContainerSearchTracker;
 
@@ -10,6 +12,7 @@ import org.yanbwe.searchcarefully.util.ContainerSearchTracker;
  * 混合搜索管理器
  * 管理鼠标指向模式和自动逐个模式的切换
  */
+@OnlyIn(Dist.CLIENT)
 public class HybridSearchManager {
     
     /**
