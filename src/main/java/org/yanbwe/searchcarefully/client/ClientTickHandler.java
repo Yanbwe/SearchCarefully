@@ -18,6 +18,11 @@ public class ClientTickHandler {
     private static int tickCounter = 0;
     private static final int SEND_INTERVAL = 1;
 
+    // 定期重新扫描容器的计数器，防止因初始扫描时机过早而漏掉物品
+    // 每 10 tick（0.5 秒）强制刷新一次 ContainerSearchTracker 缓存
+    private static int rescanCounter = 0;
+    private static final int RESCAN_INTERVAL = 10;
+
     @SubscribeEvent
     public static void onClientTick(TickEvent.ClientTickEvent event) {
         if (event.phase == TickEvent.Phase.END) {
@@ -37,6 +42,14 @@ public class ClientTickHandler {
             org.yanbwe.searchcarefully.manager.HybridSearchManager.updateSearchTarget();
             
             ContainerSearchTracker.onScreenChanged(screen);
+            
+            // 定期强制重新扫描容器，确保后续到达的物品也能被检测到
+            // 避免因初始扫描时机过早而漏掉未同步完成的物品
+            rescanCounter++;
+            if (rescanCounter >= RESCAN_INTERVAL) {
+                rescanCounter = 0;
+                ContainerSearchTracker.markContainerDirty();
+            }
 
             for (var state : ContainerSearchTracker.getTrackedContainerSlots(screen)) {
                 if (state.slotIndex >= 0 && state.slotIndex < screen.getMenu().slots.size()) {
