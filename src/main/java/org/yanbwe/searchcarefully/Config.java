@@ -13,11 +13,9 @@ public class Config {
     public static ForgeConfigSpec.IntValue MAX_SEARCH_TIME_TICKS;
     public static ForgeConfigSpec.DoubleValue SEARCH_SPEED_MULTIPLIER;
     
-    // 各稀有度等级的基础搜索时间
-    public static ForgeConfigSpec.IntValue[] RARITY_BASE_TIMES = new ForgeConfigSpec.IntValue[8]; // 索引0未使用，1-7对应稀有度
-    
-    // 各稀有度等级的独立随机时间增量
-    public static ForgeConfigSpec.IntValue[] RARITY_RANDOM_TIMES = new ForgeConfigSpec.IntValue[8]; // 索引0未使用，1-7对应稀有度
+    // 稀有度搜索时间配置（支持任意稀有度等级）
+    // 格式: rarity:baseTime:randomTime[:soundId]
+    public static ForgeConfigSpec.ConfigValue<List<? extends String>> RARITY_SEARCH_TIMES;
     
     // Custom loot table paths configuration
     public static ForgeConfigSpec.ConfigValue<List<? extends String>> CUSTOM_LOOT_TABLE_PATHS;
@@ -59,51 +57,35 @@ public class Config {
                 .comment("Multiplier for search speed (higher values = faster search)")
                 .defineInRange("searchSpeedMultiplier", 1.0, 0.1, 10.0);
         
-        // Base search times for each rarity level
-        RARITY_BASE_TIMES[1] = BUILDER
-                .comment("Base search time for rarity 1 (in ticks)")
-                .defineInRange("rarity1BaseTime", 10, 1, 1000);
-        RARITY_BASE_TIMES[2] = BUILDER
-                .comment("Base search time for rarity 2 (in ticks)")
-                .defineInRange("rarity2BaseTime", 30, 1, 1000);
-        RARITY_BASE_TIMES[3] = BUILDER
-                .comment("Base search time for rarity 3 (in ticks)")
-                .defineInRange("rarity3BaseTime", 55, 1, 1000);
-        RARITY_BASE_TIMES[4] = BUILDER
-                .comment("Base search time for rarity 4 (in ticks)")
-                .defineInRange("rarity4BaseTime", 85, 1, 1000);
-        RARITY_BASE_TIMES[5] = BUILDER
-                .comment("Base search time for rarity 5 (in ticks)")
-                .defineInRange("rarity5BaseTime", 110, 1, 1000);
-        RARITY_BASE_TIMES[6] = BUILDER
-                .comment("Base search time for rarity 6 (in ticks)")
-                .defineInRange("rarity6BaseTime", 130, 1, 1000);
-        RARITY_BASE_TIMES[7] = BUILDER
-                .comment("Base search time for rarity 7 (in ticks)")
-                .defineInRange("rarity7BaseTime", 140, 1, 1000);
-        
-        // Individual random time additions for each rarity level
-        RARITY_RANDOM_TIMES[1] = BUILDER
-                .comment("Random time addition for rarity 1 (in ticks, 0 = no randomness)")
-                .defineInRange("rarity1RandomTime", 10, 0, 1000);
-        RARITY_RANDOM_TIMES[2] = BUILDER
-                .comment("Random time addition for rarity 2 (in ticks, 0 = no randomness)")
-                .defineInRange("rarity2RandomTime", 10, 0, 1000);
-        RARITY_RANDOM_TIMES[3] = BUILDER
-                .comment("Random time addition for rarity 3 (in ticks, 0 = no randomness)")
-                .defineInRange("rarity3RandomTime", 10, 0, 1000);
-        RARITY_RANDOM_TIMES[4] = BUILDER
-                .comment("Random time addition for rarity 4 (in ticks, 0 = no randomness)")
-                .defineInRange("rarity4RandomTime", 10, 0, 1000);
-        RARITY_RANDOM_TIMES[5] = BUILDER
-                .comment("Random time addition for rarity 5 (in ticks, 0 = no randomness)")
-                .defineInRange("rarity5RandomTime", 10, 0, 1000);
-        RARITY_RANDOM_TIMES[6] = BUILDER
-                .comment("Random time addition for rarity 6 (in ticks, 0 = no randomness)")
-                .defineInRange("rarity6RandomTime", 10, 0, 1000);
-        RARITY_RANDOM_TIMES[7] = BUILDER
-                .comment("Random time addition for rarity 7 (in ticks, 0 = no randomness)")
-                .defineInRange("rarity7RandomTime", 10, 0, 1000);
+        // Rarity search time configuration (supports any rarity level)
+        RARITY_SEARCH_TIMES = BUILDER
+                .comment("Search time configuration for each rarity level.",
+                         "Format: rarity:baseTime:randomTime[:soundId]",
+                         "  rarity: The rarity level (integer >= 1)",
+                         "  baseTime: Base search time in ticks (integer >= 1)",
+                         "  randomTime: Random time range in ticks (integer >= 0)",
+                         "    Actual search time = baseTime +/- random(0, randomTime)",
+                         "  soundId: (Optional) Sound event ID to play on completion.",
+                         "    Format: namespace:path, e.g. 'minecraft:entity.player.levelup'",
+                         "    Can reference any registered sound (vanilla, mod, or resource pack).",
+                         "    If omitted or invalid, rarity is auto-mapped to the built-in completion sounds (1-7).",
+                         "Examples:",
+                         "  '1:10:10:searchcarefully:search_completion_rarity_1' - Rarity 1 with custom sound",
+                         "  '8:200:20:minecraft:block.note_block.chime'       - Rarity 8 with vanilla sound",
+                         "  '10:400:50'                                        - Rarity 10 with auto-mapped sound",
+                         "",
+                         "Default values (rarity 1-7 with their built-in completion sounds):")
+                .defineListAllowEmpty(List.of("raritySearchTimes"),
+                    () -> List.of(
+                        "1:10:10:searchcarefully:search_completion_rarity_1",
+                        "2:30:10:searchcarefully:search_completion_rarity_2",
+                        "3:55:10:searchcarefully:search_completion_rarity_3",
+                        "4:85:10:searchcarefully:search_completion_rarity_4",
+                        "5:110:10:searchcarefully:search_completion_rarity_5",
+                        "6:130:10:searchcarefully:search_completion_rarity_6",
+                        "7:140:10:searchcarefully:search_completion_rarity_7"
+                    ),
+                    obj -> obj instanceof String s && s.matches("\\d+:\\d+:\\d+(:.*)?"));
         
         // Custom loot table paths configuration
         CUSTOM_LOOT_TABLE_PATHS = BUILDER

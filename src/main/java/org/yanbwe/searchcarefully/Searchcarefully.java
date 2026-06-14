@@ -71,10 +71,10 @@ public class Searchcarefully {
             DeferredRegister.create(ForgeRegistries.SOUND_EVENTS, MODID);
         
     // 为每个稀有度注册音效
-    public static final RegistryObject<SoundEvent>[] RARITY_COMPLETION_SOUNDS = new RegistryObject[8]; // 索引 0 未使用，1-7 对应稀有度
-        
+    public static final RegistryObject<SoundEvent>[] RARITY_COMPLETION_SOUNDS = new RegistryObject[SearchCompletionSound.MAX_REGISTERED_RARITY_SOUNDS + 1]; // 索引0未使用，1-7对应稀有度
+    
     static {
-        for (int i = 1; i <= 7; i++) {
+        for (int i = 1; i <= SearchCompletionSound.MAX_REGISTERED_RARITY_SOUNDS; i++) {
             final int rarityIndex = i;
             RARITY_COMPLETION_SOUNDS[i] = SOUND_EVENTS.register("search_completion_rarity_" + i, 
                 () -> SearchCompletionSound.SEARCH_COMPLETION_EVENTS[rarityIndex]);
