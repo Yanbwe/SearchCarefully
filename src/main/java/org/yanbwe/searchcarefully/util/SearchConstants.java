@@ -118,4 +118,9 @@ public class SearchConstants {
     public static boolean isSearchProgressSoundEnabled() {
         return Config.ENABLE_SEARCH_PROGRESS_SOUND.get();
     }
+
+    // === 数值常量 ===
+
+    /** 逐格搜索模式下的搜索速度倍率 */
+    public static final double SINGLE_SLOT_SPEED_MULTIPLIER = 3.0;
 }

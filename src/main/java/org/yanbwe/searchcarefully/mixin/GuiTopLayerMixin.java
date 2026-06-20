@@ -1,18 +1,15 @@
 package org.yanbwe.searchcarefully.mixin;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.yanbwe.searchcarefully.animation.RotationAnimationHandler;
-import org.yanbwe.searchcarefully.textures.CustomTextureHandler;
+import org.yanbwe.searchcarefully.client.SearchOverlayRenderer;
 import org.yanbwe.searchcarefully.util.ItemStackHelper;
 
 /**
@@ -47,7 +44,6 @@ public class GuiTopLayerMixin {
                 double searchTimeDouble = ItemStackHelper.getRemainingSearchTime(itemStack);
 
                 if (searchTimeDouble > 0.0) {
-                    int searchTime = (int) Math.ceil(searchTimeDouble);
                     int screenWidth = mc.getWindow().getGuiScaledWidth();
                     int screenHeight = mc.getWindow().getGuiScaledHeight();
                     int hotbarX = (screenWidth - 182) / 2;
@@ -55,37 +51,7 @@ public class GuiTopLayerMixin {
                     int x = hotbarX + i * 20 + 3;
                     int y = hotbarY + 3;
 
-                    // 渲染遮罩纹理（最高层级）
-                    try {
-                        ResourceLocation maskTexture = CustomTextureHandler.getMaskTexture();
-                        RenderSystem.disableDepthTest();
-                        RenderSystem.depthMask(false);
-                        guiGraphics.blit(maskTexture, x, y, 0, 0, 16, 16, 16, 16);
-                        RenderSystem.depthMask(true);
-                        RenderSystem.enableDepthTest();
-                    } catch (Exception e) {
-                        // 纹理加载失败时忽略
-                    }
-
-                    // 渲染旋转动画
-                    try {
-                        ResourceLocation rotationTexture = CustomTextureHandler.getRotationAnimationTexture();
-                        long currentTime = System.currentTimeMillis();
-                        float[] position = RotationAnimationHandler.getRotatingPosition(
-                                searchTime * 1000L,
-                                currentTime
-                        );
-                        int animX = (int) (x + position[0]);
-                        int animY = (int) (y + position[1]);
-                        RenderSystem.disableDepthTest();
-                        RenderSystem.depthMask(false);
-                        RenderSystem.enableBlend();
-                        guiGraphics.blit(rotationTexture, animX, animY, 0, 0, 16, 16, 16, 16);
-                        RenderSystem.depthMask(true);
-                        RenderSystem.enableDepthTest();
-                    } catch (Exception e) {
-                        // 旋转动画计算失败时忽略
-                    }
+                    SearchOverlayRenderer.renderOverlay(guiGraphics, itemStack, x, y, true);
                 }
             }
         }

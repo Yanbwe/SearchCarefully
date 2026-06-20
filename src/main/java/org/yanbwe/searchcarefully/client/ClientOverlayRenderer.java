@@ -1,11 +1,9 @@
 package org.yanbwe.searchcarefully.client;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
@@ -17,9 +15,7 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.yanbwe.searchcarefully.Searchcarefully;
-import org.yanbwe.searchcarefully.animation.RotationAnimationHandler;
 import org.yanbwe.searchcarefully.mixin.ContainerAccessMixin;
-import org.yanbwe.searchcarefully.textures.CustomTextureHandler;
 import org.yanbwe.searchcarefully.util.ItemStackHelper;
 import org.yanbwe.searchcarefully.util.SearchConstants;
 
@@ -77,44 +73,7 @@ public class ClientOverlayRenderer {
             int x = guiLeft + slot.x;
             int y = guiTop + slot.y;
             
-            // 渲染遮罩纹理（最高层级，无深度测试限制）
-            try {
-                ResourceLocation maskTexture = CustomTextureHandler.getMaskTexture();
-                RenderSystem.disableDepthTest();
-                RenderSystem.depthMask(false);
-                guiGraphics.blit(maskTexture, x, y, 0, 0, 16, 16, 16, 16);
-                RenderSystem.depthMask(true);
-                RenderSystem.enableDepthTest();
-            } catch (Exception e) {
-                // 如果纹理加载失败，忽略
-            }
-            
-            // 逐格搜索模式下，只渲染当前正在搜索物品的旋转动画
-            if (org.yanbwe.searchcarefully.Config.ENABLE_SINGLE_SLOT_SEARCH.get()) {
-                if (!ClientOverlayRenderer.isItemBeingSearched(itemStack)) {
-                    continue;
-                }
-            }
-            
-            // 渲染旋转动画纹理
-            try {
-                ResourceLocation rotationTexture = CustomTextureHandler.getRotationAnimationTexture();
-                long currentTime = System.currentTimeMillis();
-                float[] position = RotationAnimationHandler.getRotatingPosition(
-                        (int) (searchTime * 1000L),
-                        currentTime
-                );
-                int animX = (int) (x + position[0]);
-                int animY = (int) (y + position[1]);
-                RenderSystem.disableDepthTest();
-                RenderSystem.depthMask(false);
-                RenderSystem.enableBlend();
-                guiGraphics.blit(rotationTexture, animX, animY, 0, 0, 16, 16, 16, 16);
-                RenderSystem.depthMask(true);
-                RenderSystem.enableDepthTest();
-            } catch (Exception e) {
-                // 如果旋转纹理加载失败，忽略
-            }
+            SearchOverlayRenderer.renderOverlay(guiGraphics, itemStack, x, y, true);
         }
     }
 
@@ -259,14 +218,6 @@ public class ClientOverlayRenderer {
         }
     }
         
-    /**
-     * 统一的槽位鼠标检测方法
-     * 提供与getSlotUnderMouse相同的接口以保持向后兼容
-     */
-    private static Slot findSlotUnderMouse(AbstractContainerScreen<?> screen, int mouseX, int mouseY) {
-        return getSlotUnderMouse(screen, mouseX, mouseY);
-    }
-
     private static boolean isMouseOverSlot(int guiLeft, int guiTop, Slot slot, int mouseX, int mouseY) {
         int slotX = guiLeft + slot.x;
         int slotY = guiTop + slot.y;

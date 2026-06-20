@@ -121,21 +121,11 @@ public class ContainerSearchTracker {
         }
         
         // 检查HybridSearchManager是否有鼠标目标
-        // 直接访问HybridSearchManager的内部状态，避免递归调用
         boolean isMouseTargetMode = org.yanbwe.searchcarefully.manager.HybridSearchManager.isInMouseTargetMode();
         Integer hybridTarget = null;
         
         if (isMouseTargetMode) {
-            // 使用反射直接获取currentTargetSlot，避免调用getCurrentSearchSlot()
-            try {
-                java.lang.reflect.Field targetSlotField = org.yanbwe.searchcarefully.manager.HybridSearchManager.class.getDeclaredField("currentTargetSlot");
-                targetSlotField.setAccessible(true);
-                hybridTarget = (Integer) targetSlotField.get(null);
-            } catch (Exception e) {
-                // 如果反射失败，回退到自动模式
-                currentSearchingSlotIndex = null;
-                return getSingleSlotTrackedSlots(screen);
-            }
+            hybridTarget = org.yanbwe.searchcarefully.manager.HybridSearchManager.getCurrentTargetSlot();
         }
         
         if (hybridTarget != null) {

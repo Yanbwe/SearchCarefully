@@ -159,6 +159,17 @@ public class HybridSearchManager {
     }
     
     /**
+     * 获取当前鼠标指向模式下的目标槽位索引
+     * 直接返回 currentTargetSlot 字段，不根据模式做任何转换。
+     * 仅在外部已经确认处于鼠标指向模式时调用才有意义。
+     *
+     * @return 当前鼠标目标槽位索引，如果为 null 则表示没有鼠标目标
+     */
+    public static Integer getCurrentTargetSlot() {
+        return currentTargetSlot;
+    }
+    
+    /**
      * 获取当前搜索目标槽位
      */
     public static Slot getCurrentSearchSlotObject() {

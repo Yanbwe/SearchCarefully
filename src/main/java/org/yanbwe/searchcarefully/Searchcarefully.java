@@ -10,6 +10,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.entity.player.PlayerContainerEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -116,29 +117,32 @@ public class Searchcarefully {
     public static final RegistryObject<MobEffect> SEARCH_SPEED_LESS = 
         MOB_EFFECTS.register("search_speed_less", () -> new org.yanbwe.searchcarefully.effects.SearchSpeedLessEffect());
     
+    // 药水持续时间常量（ticks）
+    private static final int POTION_DURATION = 12000;
+    
     // 药水配方注册（Potion）
     public static final DeferredRegister<Potion> POTIONS =
         DeferredRegister.create(ForgeRegistries.POTIONS, MODID);
     
     // 搜索速度提升药水配方（等级 I-V）
     public static final RegistryObject<Potion> SEARCH_SPEED_POTION_1 = POTIONS.register("search_speed_boost_1",
-        () -> new Potion(new MobEffectInstance(SEARCH_SPEED_BOOST.get(), 12000, 0)));
+        () -> new Potion(new MobEffectInstance(SEARCH_SPEED_BOOST.get(), POTION_DURATION, 0)));
     
     public static final RegistryObject<Potion> SEARCH_SPEED_POTION_2 = POTIONS.register("search_speed_boost_2",
-        () -> new Potion(new MobEffectInstance(SEARCH_SPEED_BOOST.get(), 12000, 1)));
+        () -> new Potion(new MobEffectInstance(SEARCH_SPEED_BOOST.get(), POTION_DURATION, 1)));
     
     public static final RegistryObject<Potion> SEARCH_SPEED_POTION_3 = POTIONS.register("search_speed_boost_3",
-        () -> new Potion(new MobEffectInstance(SEARCH_SPEED_BOOST.get(), 12000, 2)));
+        () -> new Potion(new MobEffectInstance(SEARCH_SPEED_BOOST.get(), POTION_DURATION, 2)));
     
     public static final RegistryObject<Potion> SEARCH_SPEED_POTION_4 = POTIONS.register("search_speed_boost_4",
-        () -> new Potion(new MobEffectInstance(SEARCH_SPEED_BOOST.get(), 12000, 3)));
+        () -> new Potion(new MobEffectInstance(SEARCH_SPEED_BOOST.get(), POTION_DURATION, 3)));
     
     public static final RegistryObject<Potion> SEARCH_SPEED_POTION_5 = POTIONS.register("search_speed_boost_5",
-        () -> new Potion(new MobEffectInstance(SEARCH_SPEED_BOOST.get(), 12000, 4)));
+        () -> new Potion(new MobEffectInstance(SEARCH_SPEED_BOOST.get(), POTION_DURATION, 4)));
     
     // 搜索速度降低药水配方（等级 II）
     public static final RegistryObject<Potion> SEARCH_SPEED_LESS_POTION_2 = POTIONS.register("search_speed_less_2",
-        () -> new Potion(new MobEffectInstance(SEARCH_SPEED_LESS.get(), 12000, 1)));
+        () -> new Potion(new MobEffectInstance(SEARCH_SPEED_LESS.get(), POTION_DURATION, 1)));
     
     // 不需要注册药水物品，直接使用原版的 minecraft:potion
     
@@ -233,6 +237,14 @@ public class Searchcarefully {
         Player player = event.getEntity();
         if (!player.level().isClientSide()) {
             SearchSoundSessionManager.forceStopSound(player);
+        }
+    }
+    
+    // 玩家登出时清理音效会话
+    @SubscribeEvent
+    public void onPlayerLoggedOut(PlayerEvent.PlayerLoggedOutEvent event) {
+        if (!event.getEntity().level().isClientSide()) {
+            SearchSoundSessionManager.removePlayer(event.getEntity().getUUID());
         }
     }
 

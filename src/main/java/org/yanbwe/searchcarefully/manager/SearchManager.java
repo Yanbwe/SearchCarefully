@@ -149,7 +149,7 @@ public class SearchManager {
         // 逐格搜索模式下搜索速度乘以三
         if (org.yanbwe.searchcarefully.Config.ENABLE_SINGLE_SLOT_SEARCH.get() && 
             org.yanbwe.searchcarefully.Config.SINGLE_SLOT_SEARCH_TIME_MULTIPLIER.get()) {
-            actualDecrement *= 3.0;
+            actualDecrement *= SearchConstants.SINGLE_SLOT_SPEED_MULTIPLIER;
         }
         
         return Math.max(MIN_DECREMENT, actualDecrement);
