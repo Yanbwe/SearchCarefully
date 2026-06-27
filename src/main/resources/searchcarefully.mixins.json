@@ -1,0 +1,21 @@
+{
+  "required": true,
+  "package": "org.yanbwe.searchcarefully.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "SlotMixin"
+  ],
+  "client": [
+    "SlotRenderMixin",
+    "ContainerScreenRenderMixin",
+    "GuiHotbarRenderMixin",
+    "GuiTopLayerMixin",
+    "ContainerAccessMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "overwrites": {
+    "requireAnnotations": true
+  }
+}
